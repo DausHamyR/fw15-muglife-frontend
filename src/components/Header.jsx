@@ -6,12 +6,12 @@ import { HiOutlineViewList } from 'react-icons/hi';
 
 function Header() {
     return (
-        <nav>
+        <nav className="fixed bg-white z-10 w-full">
             <div className="w-full h-28 flex items-center justify-between px-11 lg:px-24 xl:px-40 shadow-sm">
-                <div>
+                <div className="flex-1 flex items-center justify-start">
                     <Image src={logo} width={100} alt="logo-head" />
                 </div>
-                <div className="hidden md:flex items-center gap-2 lg:gap-7">
+                <div className="flex-1 hidden md:flex items-center justify-center gap-2 lg:gap-7">
                     <Link href="/" className="text-base text-secondary hover:font-bold w-20 text-center">
                         Home
                     </Link>
@@ -25,7 +25,7 @@ function Header() {
                         History
                     </Link>
                 </div>
-                <div className="hidden md:flex items-center">
+                <div className="flex-1 hidden md:flex items-center justify-end">
                     <Link href="/auth/login" className="btn btn-ghost rounded-full lg:w-36 text-base text-primary capitalize">
                         Login
                     </Link>

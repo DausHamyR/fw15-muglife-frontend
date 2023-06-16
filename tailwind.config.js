@@ -11,6 +11,10 @@ module.exports = {
           'login-pattern': "url('../../public/auth-side.jpg')",
           'forgot-pattern': "url('../../public/forgot.jpg')",
       },
+      fontFamily: {
+        'label-food': ['Poppins', 'sans-serif'],
+
+    }
     },
   },
   daisyui:{
