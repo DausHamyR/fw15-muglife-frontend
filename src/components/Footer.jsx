@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import logo from '../assets/Logo.png';
+import Link from 'next/link';
 import { FaFacebookF, FaInstagram, FaTwitter } from 'react-icons/fa';
 function Footer() {
     return (
@@ -13,28 +14,34 @@ function Footer() {
                         </div>
                         <div className="w-full max-w-[340px] text-base text-primary font-semibold">Coffee Shop is a store that sells some good meals, and especially coffee. We provide high quality beans</div>
                         <div className="flex items-center justify-start gap-5">
-                            <div className="w-9 h-9 bg-accent rounded-full flex items-center justify-center">
-                                <i>
-                                    <FaFacebookF size={15} className="text-primary" />
-                                </i>
+                            <div className="w-9 h-9 bg-accent rounded-full flex items-center justify-center cursor-pointer">
+                                <Link href="https://www.facebook.com">
+                                    <i>
+                                        <FaFacebookF size={15} className="text-primary" />
+                                    </i>
+                                </Link>
                             </div>
-                            <div className="w-9 h-9 bg-accent rounded-full flex items-center justify-center">
+                            <div className="w-9 h-9 bg-accent rounded-full flex items-center justify-center cursor-pointer">
+                                <Link href="https://twitter.com">
                                 <i>
                                     <FaTwitter size={15} className="text-primary" />
                                 </i>
+                                </Link>
                             </div>
-                            <div className="w-9 h-9 bg-accent rounded-full flex items-center justify-center">
+                            <div className="w-9 h-9 bg-accent rounded-full flex items-center justify-center cursor-pointer">
+                                <Link href="https://www.instagram.com">
                                 <i>
                                     <FaInstagram size={15} className="text-primary" />
                                 </i>
+                                </Link>
                             </div>
                         </div>
-                        <div className="text-base text-accent">©2023MugLife</div>
+                        <div className="text-base text-accent">©2023 MugLife</div>
                     </div>
                     <div className="flex items-start justify-start gap-7 lg:gap-24">
                         <div className="flex flex-col items-start justify-start gap-7">
                             <div className="text-primary text-lg font-semibold">Product</div>
-                            <div className="flex flex-col items-start justify-start gap-5 text-secondary">
+                            <div className="flex flex-col items-start justify-start gap-5 text-secondary cursor-pointer">
                                 <div>Download</div>
                                 <div>Pricing</div>
                                 <div>Locations</div>
@@ -44,7 +51,7 @@ function Footer() {
                         </div>
                         <div className="flex flex-col items-start justify-start gap-7">
                             <div className="text-primary text-lg font-semibold">Engage</div>
-                            <div className="flex flex-col items-start justify-start gap-5 text-secondary">
+                            <div className="flex flex-col items-start justify-start gap-5 text-secondary cursor-pointer">
                                 <div>Coffee Shop ?</div>
                                 <div>FAQ</div>
                                 <div>About Us</div>
