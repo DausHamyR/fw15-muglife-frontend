@@ -3,18 +3,24 @@ import Image from 'next/image';
 import React from 'react';
 import logo from '../../assets/Logo.png';
 import { FcGoogle } from 'react-icons/fc';
+import {FiEyeOff, FiEye} from "react-icons/fi"
+import {MdError} from "react-icons/md"
 import Link from 'next/link';
 import Footer from '@/components/Footer';
 import { Formik } from 'formik';
 import * as Yup from "yup";
-import { URLSearchParams } from 'next/dist/compiled/@edge-runtime/primitives/url';
+
+import { withIronSessionSsr } from "iron-session/next";
+import { useRouter } from 'next/router';
+import axios from 'axios';
+import cookieConfig from '@/helpers/cookieConfig';
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
         const token = req.session?.token;
 
         if (token) {
-            res.setHeader("location", "/home");
+            res.setHeader("location", "/");
             res.statusCode = 302;
             res.end();
             return { prop: {token} };
@@ -26,7 +32,7 @@ export const getServerSideProps = withIronSessionSsr(
             },
         };
     },
-    coockieConfig
+    cookieConfig
 );
 
 const validationSchema = Yup.object({
@@ -35,20 +41,34 @@ const validationSchema = Yup.object({
 });
 
 function Login() {
+    const router = useRouter()
     const [errorMessage, setErrorMessage] = React.useState("")
-    const doLogin = async (values)=>{
-        try {
-            const form = new URLSearchParams({
-                email: values.email,
-                password: values.password
-            })
-            if(!form){
-                setErrorMessage("Data not found")
-            }
-        } catch (error) {
-            
+    const [loading, setLoading] = React.useState(false)
+    const [showEye, setShowEye] = React.useState(false)
+
+    const doLogin = async(values)=>{
+        setErrorMessage("");
+        setLoading(true);
+        const form = new URLSearchParams({
+            email: values.email, 
+            password: values.password
+        }).toString();
+
+        const {data} = await axios.post("http://localhost:3000/api/login", form);
+        console.log(data)
+        if(data.success === false){
+            setErrorMessage("Email or Password wrong");
+            setLoading(false);
         }
-    }
+        if(data.success === true){
+            router.push("/");
+            setLoading(false);
+        }
+    };
+
+    const doShowEye = ()=>{
+        setShowEye(!showEye);
+    };
     return (
         <>
             <Head>
@@ -86,39 +106,49 @@ function Login() {
      
                             }) => (
                             <form onSubmit={handleSubmit} className="form-control w-full lg:max-w-[500px] h-full flex flex-col items-start justify-start">
+                                {errorMessage && (<div className="flex flex-row justify-center alert alert-error shadow-lg text-white text-lg w-full my-2"><MdError size={30}/>{errorMessage}</div>)}
                                 <div className="w-full flex flex-col items-start justify-start gap-3 pb-7">
                                     <div className="text-primary text-lg font-semibold">Email Address :</div>
-                                    <input 
-                                        type="email" 
-                                        name="email"
-                                        className={`input input-secondary ${errors.email && touched.email && "border-error"} w-full text-primary`}
-                                        placeholder="Enter your email address"
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        value={values.email} 
-                                    />
-                                    {errors.email && touched.email && (
-                                        <label className="label">
-                                            <span className="label-text-alt text-error">{errors.email}</span>
-                                        </label>)
-                                    }
+                                    <div className="form-control w-full flex flex-col gap-1">
+                                        <input 
+                                            type="email" 
+                                            name="email"
+                                            className={`input input-secondary ${errors.email && touched.email && "input-error"} w-full text-primary`}
+                                            placeholder="Enter your email address"
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            value={values.email} 
+                                        />
+                                        {errors.email && touched.email && (
+                                            <label className="label">
+                                                <span className="label-text-alt text-error text-[16px]">{errors.email}</span>
+                                            </label>)
+                                        }
+                                    </div>
                                 </div>
-                                <div className="w-full flex flex-col items-start justify-start gap-3 pb-5">
+                                <div className="relative w-full flex flex-col items-start justify-start gap-3 pb-5">
                                     <div className="text-primary text-lg font-semibold">Password :</div>
-                                    <input 
-                                        type="password" 
-                                        name="password"
-                                        className={`input input-secondary ${errors.password && touched.password && "border-error"} w-full text-primary`} 
-                                        placeholder="Enter your password" 
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        value={values.email}
-                                    />
-                                    {errors.password && touched.password && (
-                                        <label className="label">
-                                            <span className="label-text-alt text-error">{errors.password}</span>
-                                        </label>)
-                                    }
+                                    <div className="form-control w-full flex flex-col gap-1">
+                                        <input 
+                                            type={showEye ? "text" : "password"} 
+                                            name="password"
+                                            className={`input input-secondary ${errors.password && touched.password && "input-error"} w-full text-primary`} 
+                                            placeholder="Enter your password" 
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            value={values.password}
+                                        />
+                                        {errors.password && touched.password && (
+                                            <label className="label">
+                                                <span className="label-text-alt text-[16px] text-error">{errors.password}</span>
+                                            </label>)
+                                        }
+                                        <button type="button" onClick={doShowEye}>
+                                            {showEye ? (<FiEyeOff size={23} className="absolute text-secondary top-[50px]  right-5" />) :
+                                                (<FiEye size={23} className="absolute text-secondary top-[50px] right-5" />)
+                                            }
+                                        </button>   
+                                    </div>
                                 </div>
                                 <div className="w-full flex flex-col items-start justify-start gap-3 pb-5">
                                     <Link href="/auth/forgot-password" className="text-primary text-lg font-semibold underline">
@@ -126,7 +156,8 @@ function Login() {
                                     </Link>
                                 </div>
                                 <div className="w-full flex flex-col items-start justify-start gap-3 shadow-md mt-5 pb-7">
-                                    <button className="btn btn-accent text-primary text-base capitalize w-full">Sign Up</button>
+                                {loading ? (<button className="btn btn-accent text-primary text-base capitalize w-full"><span className="loading loading-spinner loading-sm"></span></button>) :
+                                    (<button className="btn btn-accent text-primary text-base capitalize w-full">Log In</button>) }
                                 </div>
                                 <div className="w-full flex flex-col items-start justify-start gap-3 shadow-md">
                                     <button className="btn btn-neutral text-primary text-base capitalize w-full">
