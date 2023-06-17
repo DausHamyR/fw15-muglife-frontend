@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import coffee from "../assets/cold-brew.png";
-import Navbar from "../components/Header";
-import Footer from "../components/Footer";
+import coffee from "../../assets/cold-brew.png";
+import Navbar from "../../components/Header";
+import Footer from "../../components/Footer";
 
 const ProductDetails = () => {
     return (
@@ -29,6 +29,7 @@ const ProductDetails = () => {
                                 <div className='flex flex-col gap-[25px]'>
                                     <button className='font-semibold bg-[#D5CEA3] hover:bg-[#d8d2a7] text-[#3C2A21] py-5 w-full rounded-lg'>Add to Cart</button>
                                     <button className='font-semibold bg-[#7D6E83] hover:bg-[#3C2A21] py-5 w-full rounded-lg text-white'>Ask a staff</button>
+                                    <button className='font-semibold bg-black hover:bg-[#666A6D] py-5 w-full rounded-lg text-white'>Delete Menu</button>
                                 </div>
                             </div>
                         </div>
