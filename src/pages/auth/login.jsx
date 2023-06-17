@@ -5,8 +5,50 @@ import logo from '../../assets/Logo.png';
 import { FcGoogle } from 'react-icons/fc';
 import Link from 'next/link';
 import Footer from '@/components/Footer';
+import { Formik } from 'formik';
+import * as Yup from "yup";
+import { URLSearchParams } from 'next/dist/compiled/@edge-runtime/primitives/url';
+
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req, res }) {
+        const token = req.session?.token;
+
+        if (token) {
+            res.setHeader("location", "/home");
+            res.statusCode = 302;
+            res.end();
+            return { prop: {token} };
+        }
+
+        return {
+            props: {
+                token: null
+            },
+        };
+    },
+    coockieConfig
+);
+
+const validationSchema = Yup.object({
+    email: Yup.string().email("Email is invalid").required("Email is invalid"),
+    password: Yup.string().required("Password is invalid")
+});
 
 function Login() {
+    const [errorMessage, setErrorMessage] = React.useState("")
+    const doLogin = async (values)=>{
+        try {
+            const form = new URLSearchParams({
+                email: values.email,
+                password: values.password
+            })
+            if(!form){
+                setErrorMessage("Data not found")
+            }
+        } catch (error) {
+            
+        }
+    }
     return (
         <>
             <Head>
@@ -28,14 +70,55 @@ function Login() {
                                 </div>
                             </div>
                             <div className="text-3xl text-primary font-semibold pb-14">Login</div>
-                            <form className="form-control w-full lg:max-w-[500px] h-full flex flex-col items-start justify-start">
+                            <Formik
+                                initialValues={{ 
+                                email: "", 
+                                password: "" }}
+                                validationSchema = {validationSchema}
+                                onSubmit={doLogin}
+                            >{({
+                                values,
+                                errors,
+                                touched,
+                                handleChange,
+                                handleBlur,
+                                handleSubmit,
+     
+                            }) => (
+                            <form onSubmit={handleSubmit} className="form-control w-full lg:max-w-[500px] h-full flex flex-col items-start justify-start">
                                 <div className="w-full flex flex-col items-start justify-start gap-3 pb-7">
                                     <div className="text-primary text-lg font-semibold">Email Address :</div>
-                                    <input type="email" className="input input-secondary w-full text-primary" placeholder="Enter your email address" />
+                                    <input 
+                                        type="email" 
+                                        name="email"
+                                        className={`input input-secondary ${errors.email && touched.email && "border-error"} w-full text-primary`}
+                                        placeholder="Enter your email address"
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        value={values.email} 
+                                    />
+                                    {errors.email && touched.email && (
+                                        <label className="label">
+                                            <span className="label-text-alt text-error">{errors.email}</span>
+                                        </label>)
+                                    }
                                 </div>
                                 <div className="w-full flex flex-col items-start justify-start gap-3 pb-5">
                                     <div className="text-primary text-lg font-semibold">Password :</div>
-                                    <input type="password" className="input input-secondary w-full text-primary" placeholder="Enter your password" />
+                                    <input 
+                                        type="password" 
+                                        name="password"
+                                        className={`input input-secondary ${errors.password && touched.password && "border-error"} w-full text-primary`} 
+                                        placeholder="Enter your password" 
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        value={values.email}
+                                    />
+                                    {errors.password && touched.password && (
+                                        <label className="label">
+                                            <span className="label-text-alt text-error">{errors.password}</span>
+                                        </label>)
+                                    }
                                 </div>
                                 <div className="w-full flex flex-col items-start justify-start gap-3 pb-5">
                                     <Link href="/auth/forgot-password" className="text-primary text-lg font-semibold underline">
@@ -52,6 +135,11 @@ function Login() {
                                     </button>
                                 </div>
                             </form>
+
+
+                            )}
+
+                            </Formik>
                         </div>
                     </div>
                 </div>
