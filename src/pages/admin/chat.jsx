@@ -1,19 +1,18 @@
 import React from "react";
 import Image from "next/image";
-import search from "../assets/search.png";
-import profile1 from "../assets/image 48.svg";
-import profile2 from "../assets/image 50.svg";
-import profile3 from "../assets/image 49.svg";
-import Footer from "../components/Footer";
-import Navbar from "../components/Header";
 import Link from "next/link";
+import search from "../../assets/search.png";
+import profile1 from "../../assets/image 48.svg";
+import profile2 from "../../assets/image 50.svg";
+import profile3 from "../../assets/image 49.svg";
+import Footer from "../../components/Footer";
+import Navbar from "../../components/Header";
 
-const Chat = () => {
+const AdminChat = () => {
     return (
         <>
-            <title>Chat | MugLife</title>
             <Navbar />
-            <div className="pt-[100px] font-poppins">
+            <div className="font-poppins pt-[100px]">
                 <div className="lg:bg-[url('../assets/background-chat.png')] bg-cover bg-no-repeat pb-[89px]">
                     <div className="lg:pt-[84px] lg:px-[200px] lg:flex ">
                         <div className=" py-[60px] px-3 lg:px-[50px]  bg-[#553b2e] lg:rounded-l-[20px]">
@@ -25,18 +24,18 @@ const Chat = () => {
                                 />
                             </div>
                             <p className="text-[14px] text-white font-bold mb-[50px] pl-[2px]">
-                                Choose a staff you want to talk with
+                                Tap a chat to see the message
                             </p>
                             <div className="flex mb-[20px] text-white">
                                 <Image
                                     src={profile1}
-                                    alt="jason"
+                                    alt="nico"
                                     className="w-[80px] h-[81px] mr-[16px] rounded-[50%]"
                                 />
                                 <div>
-                                    <p className="text-[20px] font-bold mb-[10px]">Jason</p>
+                                    <p className="text-[20px] font-bold mb-[10px]">Nico</p>
                                     <p className="text-[14px] w-[210px]">
-                                        Hey, I’m Jason, Let’s talk and share what’s on your
+                                        Hey, I’m Nico, Let’s talk and share what’s on your
                                         thoughts!
                                     </p>
                                 </div>
@@ -45,14 +44,14 @@ const Chat = () => {
                             <div className="flex mb-[20px] text-white">
                                 <Image
                                     src={profile2}
-                                    alt="cheryn"
+                                    alt="chey"
                                     className="w-[80px] h-[81px] mr-[16px] rounded-[50%]"
                                 />
                                 <div>
                                     <p className="text-[20px] font-bold mb-[10px]">Cheryn</p>
                                     <p className="text-[14px] w-[210px]">
-                                        Hey, I’m Cheryn, can I help you? Just chat me if you have some 
-                                        trouble in ordering, happy shopping!
+                                    Hey, I’m Cheryn, can I help you? Just chat me if you have 
+                                    some trouble in ordering, happy shopping!
                                     </p>
                                 </div>
                             </div>
@@ -60,14 +59,14 @@ const Chat = () => {
                             <div className="flex mb-[20px] text-white">
                                 <Image
                                     src={profile3}
-                                    alt="lou"
+                                    alt="Lou"
                                     className="w-[80px] h-[81px] mr-[16px] rounded-[50%]"
                                 />
                                 <div>
-                                    <p className="text-[20px] font-bold mb-[10px]">Lou</p>
+                                    <p className="text-[20px] font-bold mb-[10px]">Cheryn</p>
                                     <p className="text-[14px] w-[210px]">
-                                        Hey, I’m Lou, I’ll here to help you, just talk to me and we solve 
-                                        the problem. Have a good day!
+                                    Hey, I’m Lou, I’ll here to help you, just talk to me and
+                                    we solve the problem. Have a good day!
                                     </p>
                                 </div>
                             </div>
@@ -77,33 +76,60 @@ const Chat = () => {
                                 <p className="text-[#3C2A21] text-[30px] font-bold leading-[45px] mb-[70px]">
                                     Room Chat
                                 </p>
-                                <Link href="/room-chat">
+                                <Link href="/admin/room-chat">
+                                    <div className="flex mb-[20px] text-white">
+                                        <Image
+                                            src={profile3}
+                                            alt="Lucas"
+                                            className="w-[80px] h-[81px] mr-[16px] rounded-[50%]"
+                                        />
+                                        <div className="mr-[5px]">
+                                            <p className="text-[#3C2A21] text-[20px] font-bold mb-[10px]">
+                                                Lucas
+                                            </p>
+                                            <p className="text-[#4F5665] text-[15px] leading-[22px] font-bold">
+                                                Hey jason, I can’t find the promo section. Can u tell me
+                                                where is it?
+                                            </p>
+                                        </div>
+                                        <div className="flex flex-col justify-between">
+                                            <span className="text-[#9F9F9F] text-[10px] leading-[15px]">
+                                                02.14 PM
+                                            </span>
+                                            <span className=" text-[12px] border-1 bg-[#3C2A21] rounded-[50%] text-center w-[20px] h-[20px] font-bold">
+                                                1
+                                            </span>
+                                        </div>
+                                    </div>
+                                </Link>
+                                <hr className="mb-[27px]" />
                                 <div className="flex mb-[20px] text-white">
                                     <Image
                                         src={profile1}
-                                        alt="jason"
+                                        alt="Krist"
                                         className="w-[80px] h-[81px] mr-[16px] rounded-[50%]"
                                     />
-                                    <div>
+                                    <div className="mr-[5px]">
                                         <p className="text-[#3C2A21] text-[20px] font-bold mb-[10px]">
-                                            Jason
+                                            Krist
                                         </p>
-                                        <p className="text-[#4F5665] text-[15px] leading-[22px]">
+                                        <p className="text-[#3C2A21] text-[15px] leading-[22px] ">
                                             Hey jason, I can’t find the promo section. Can u tell me
                                             where is it?
                                         </p>
                                     </div>
-                                    <span className="text-[#9F9F9F] text-[10px] leading-[15px]">
-                                        02.14 PM
-                                    </span>
+                                    <div className="flex flex-col justify-between">
+                                        <span className="text-[#9F9F9F] text-[10px] leading-[15px]">
+                                            02.14 PM
+                                        </span>
+                                    </div>
                                 </div>
-                                </Link>
-                                <hr />
+                                <hr className="mb-[27px]" />
                             </div>
                             <div className="pt-[196px] text-center">
                                 <p className="text-[#9F9F9F] text-[15px]">
-                                    You have no conversation, start chat other staff! Have a good
-                                    day!
+                                    You have no conversation, you’ll receive notification when a
+                                    customer chat you. Keep up the good work!
                                 </p>
                             </div>
                         </div>
@@ -115,4 +141,4 @@ const Chat = () => {
     );
 };
 
-export default Chat;
+export default AdminChat;
