@@ -10,6 +10,7 @@ module.exports = {
       backgroundImage: {
           'login-pattern': "url('../../public/auth-side.jpg')",
           'forgot-pattern': "url('../../public/forgot.jpg')",
+          'payment-pattern': "url('../../public/payment.jpg')",
       },
       fontFamily: {
         'label-food': ['Poppins', 'sans-serif'],
