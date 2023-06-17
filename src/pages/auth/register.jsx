@@ -5,8 +5,57 @@ import logo from '../../assets/Logo.png';
 import { FcGoogle } from 'react-icons/fc';
 import Link from 'next/link';
 import Footer from '@/components/Footer';
+import { useRouter } from 'next/router';
+import http from '@/helpers/http.helper';
 
 function Register() {
+    const router = useRouter()
+    const [errorMessage, setErrorMessage] = React.useState('')
+    const [successMessage, setSuccessMessage] = React.useState('')
+    const [loading, setLoading] = React.useState(false)
+
+    const doRegister = async (event) => {
+        try{
+            setLoading(true)
+            event.preventDefault()
+            const {value: email} = event.target.email
+            const {value: password} = event.target.password
+            const {value: phoneNumber} = event.target.phoneNumber
+            setSuccessMessage('')
+            
+            if(!email.includes('@')){
+                setErrorMessage('Invalid email')
+                return
+            }
+            const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+            if (!password || !passwordRegex.test(password)) {
+                setErrorMessage('Password must contain at least 8 characters, including 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol')
+                return
+            }
+            if(!phoneNumber.startsWith('08')){
+                setErrorMessage('Enter the correct mobile number')
+                return
+            }
+            if(phoneNumber.length < 10){
+                setErrorMessage('Phone Number less than 10')
+                return
+            }
+            const body = new URLSearchParams({email, password, phoneNumber}).toString()
+            const {data} = await http().post('/auth/register', body)
+            setSuccessMessage(data.message)
+            setErrorMessage('')
+            router.push('/auth/login')
+        }catch(err){
+            const message = err?.response?.data?.message
+            if(message){
+                setErrorMessage(message)
+            }
+            setSuccessMessage('')
+        }finally{
+            setLoading(false)
+        }
+    }
+
     return (
         <>
             <Head>
@@ -28,21 +77,31 @@ function Register() {
                                 </div>
                             </div>
                             <div className="text-3xl text-primary font-semibold">Sign Up</div>
-                            <form className="form-control w-full lg:max-w-[500px] h-full flex flex-col items-start justify-start gap-7">
+                            {errorMessage && (
+                                <div>
+                                    <h1 className="alert alert-error w-[400px]">{errorMessage}</h1>
+                                </div>
+                            )}
+                            {successMessage && (
+                                <div>
+                                    <h1 className="alert alert-success w-[400px]">{successMessage}</h1>
+                                </div>
+                            )}
+                            <form onSubmit={doRegister} className="form-control w-full lg:max-w-[500px] h-full flex flex-col items-start justify-start gap-7">
                                 <div className="w-full flex flex-col items-start justify-start gap-3">
                                     <div className="text-primary text-lg font-semibold">Email Address :</div>
-                                    <input type="email" className="input input-secondary w-full text-primary" placeholder="Enter your email address" />
+                                    <input name='email' type="email" className="input input-secondary w-full text-primary" placeholder="Enter your email address" />
                                 </div>
                                 <div className="w-full flex flex-col items-start justify-start gap-3">
                                     <div className="text-primary text-lg font-semibold">Password :</div>
-                                    <input type="password" className="input input-secondary w-full text-primary" placeholder="Enter your password" />
+                                    <input name='password' type="password" className="input input-secondary w-full text-primary" placeholder="Enter your password" />
                                 </div>
                                 <div className="w-full flex flex-col items-start justify-start gap-3">
                                     <div className="text-primary text-lg font-semibold">Phone Number :</div>
-                                    <input type="text" className="input input-secondary w-full text-primary" placeholder="Enter your phone number" />
+                                    <input name='phoneNumber' type="number" className="input input-secondary w-full text-primary" placeholder="Enter your phone number" />
                                 </div>
                                 <div className="w-full flex flex-col items-start justify-start gap-3 shadow-md mt-5">
-                                    <button className="btn btn-accent text-primary text-base capitalize w-full">Sign Up</button>
+                                    <button type='submit' disabled={loading} className="btn btn-accent text-primary text-base capitalize w-full">Sign Up</button>
                                 </div>
                                 <div className="w-full flex flex-col items-start justify-start gap-3 shadow-md">
                                     <button className="btn btn-neutral text-primary text-base capitalize w-full">
