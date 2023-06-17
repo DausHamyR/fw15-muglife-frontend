@@ -11,7 +11,7 @@ function PaymmentAndDelivery() {
     return (
         <>
             <Head>
-                <title>Payment & Delivry</title>
+                <title>Payment & Delivery</title>
             </Head>
             <Header />
             <main className="pt-28">
