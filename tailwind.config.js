@@ -26,8 +26,8 @@ module.exports = {
                     'accent':'#D5CEA3',
                     'neutral':'#E5E5CB',
                     'info':'#EAEAEA',
-                    'success':'#EAEAEA',
-                    'error':'#EAEAEA',
+                    'success':'#10b981',
+                    'error':'#dc2626',
                     'snow': '#EAEAEA'
         }
       }
