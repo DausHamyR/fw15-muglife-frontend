@@ -1,5 +1,6 @@
 import react from "react";
 import Image from "next/image";
+import { BiSearch } from "react-icons/bi";
 import star from "../assets/star.svg";
 import team from "../assets/team-work-landing.png";
 import food1 from "../assets/food-landing-1.png";
@@ -16,15 +17,15 @@ import user2 from "../assets/user-testi-2.png";
 import user3 from "../assets/user-testi-3.png";
 import { User, Heart, MapPin, Check, ArrowLeft, ArrowRight } from "react-feather";
 import Footer from "@/components/Footer";
-// import Navbar from "";
+import Navbar from "../components/Header";
 import Link from "next/link";
 
 const Landing = () => {
     return (
         <div>
-            {/* <Navbar /> */}
+            <Navbar />
             {/* Header Landing */}
-            <header className="hero h-[80vh] justify-start md:px-20 bg-[url('../assets/bg-landing.png')] ">
+            <header className="hero h-[100vh] justify-start md:px-20 bg-[url('../assets/bg-landing.png')] ">
                 <div className="hero-content text-left text-neutral-content">
                     <div className="max-w-md">
                         <h1 className="mb-5 text-5xl text-[#D5CEA3] font-bold">
@@ -37,6 +38,15 @@ const Landing = () => {
                         <button className="btn bg-[#D5CEA3] text-[#3C2A21] hover:text-[#D5CEA3] px-10 font-bold capitalize">
                             Get Started
                         </button>
+                    </div>
+                    <div className="lg:flex w-full px-3 lg:px-[150px] flex-row">
+                        <div className="pt-[20px] relative">
+                            <BiSearch className="absolute top-9 left-5 w-8 h-8" />
+                            <input
+                                placeholder="Search"
+                                className="focus:outline-none bg-[#EFEEEE] py-[17px] pl-[75px] lg:pr-10 font-[900] rounded-[30px]"
+                            />
+                        </div>
                     </div>
                 </div>
             </header>
@@ -119,142 +129,146 @@ const Landing = () => {
                     </div>
                 </div>
             </section>
+
             {/* Favorite */}
-            <section className="px-5 md:px-20 flex flex-col items-center justify-center mt-20">
-                <h1 className="text-4xl text-[#3C2A21] font-bold text-center md:text-left lg:text-left mb-5">
-                    Here is People’s Favorite
-                </h1>
-                <p className="text-[#846c60] text-sm text-center md:text-left lg:text-left">
-                    Let’s choose and have a bit taste of poeple’s favorite. It might be
-                    yours too!
-                </p>
-                <div className="flex flex-col md:flex-row lg:flex-row gap-24 md:gap-3 lg:gap-3 mt-24 md:mt-32 lg:mt-32">
-                    <div className="flex flex-col justify-center items-center px-10 rounded-md border relative">
-                        <div className="absolute top-[-64px]">
-                            <Image
-                                className="rounded-full drop-shadow-2xl"
-                                src={food1}
-                                alt="es-krim"
-                            />
-                        </div>
-                        <div className="text-center pt-20">
-                            <h3 className="font-bold text-[#3C2A21]">Hazelnut Latte</h3>
-                        </div>
-                        <div className="flex flex-col grow gap-5 my-8">
-                            <div className="flex gap-2 items-center">
-                                <Check className="text-green-600" />
-                                <p className="text-sm text-gray-600 font-medium">Hazelnut Syrup</p>
-                            </div>
-                            <div className="flex gap-2 items-center">
-                                <Check className="text-green-600" />
-                                <p className="text-sm text-gray-600 font-medium">Vanilla Whipped Cream</p>
-                            </div>
-                            <div className="flex gap-2 items-center">
-                                <Check className="text-green-600" />
-                                <p className="text-sm text-gray-600 font-medium">Ice / Hot</p>
-                            </div>
-                            <div className="flex gap-2 items-center">
-                                <Check className="text-green-600" />
-                                <p className="text-sm text-gray-600 font-medium">Sliced Banana on Top</p>
-                            </div>
-                        </div>
-                        <div className="flex flex-col gap-3 pb-10">
-                            <h1 className="text-2xl text-[#3C2A21] font-bold text-center">IDR 25.000</h1>
-                            <button className="btn btn-outline outline-[#3C2A21] hover:bg-[#3C2A21] hover:text-[#E5E5CB] rounded-full w-36 font-bold capitalize text-[#6A4029]">
-                                Order Now
-                            </button>
-                        </div>
-                    </div>
-                    <div className="flex flex-col justify-center items-center px-10 rounded-md border relative">
-                        <div className="absolute top-[-64px]">
-                            <Image
-                                className="rounded-full drop-shadow-2xl"
-                                src={food2}
-                                alt="cake"
-                            />
-                        </div>
-                        <div className="text-center pt-20">
-                            <h3 className="font-bold text-[#3C2A21]">Pinky Promise</h3>
-                        </div>
-                        <div className="flex flex-col grow gap-5 my-8">
-                            <div className="flex gap-2 items-center">
-                                <Check className="text-green-600" />
-                                <p className="text-sm text-gray-600 font-medium">1 Shot of Coffee</p>
-                            </div>
-                            <div className="flex gap-2 items-center">
-                                <Check className="text-green-600" />
-                                <p className="text-sm text-gray-600 font-medium">Vanilla Whipped Cream</p>
-                            </div>
-                            <div className="flex gap-2 items-center">
-                                <Check className="text-green-600" />
-                                <p className="text-sm text-gray-600 font-medium">Chocolate Biscuits</p>
-                            </div>
-                            <div className="flex gap-2 items-center">
-                                <Check className="text-green-600" />
-                                <p className="text-sm text-gray-600 font-medium">Strawberry Syrup</p>
-                            </div>
-                            <div className="flex gap-2 items-center">
-                                <Check className="text-green-600" />
-                                <p className="text-sm text-gray-600 font-medium">
-                                    Sliced strawberry on Top
+            <div className="bg-[#e2dcb2] lg:h-[1250px] w-full flex flex-col items-center">
+                <div className=" block pt-[80px] text-center mb-[90px]">
+                    <p className="text-[#3C2A21] text-[35px] leading-[50px] font-bold mb-[19px]">
+                        Here is People’s Favorite
+                    </p>
+                    <p className="text-[#846c60] text-[16px] leading-[30px] ">
+                        Let’s choose and have a bit taste of poeple’s favorite. It might be
+                        yours too!
+                    </p>
+                </div>
+                <div className="lg:flex justify-center items-center px-3 lg:px-5 lg:w-full">
+                    <div className="lg:carousel carousel-center lg:flex gap-5 gap-20 w-full lg:px-5 justify-center">
+                        <div className="carousel-item">
+                            <div className="w-80 flex flex-col justify-center items-center py-5 border-2 bg-white rounded-[10px] pt-[62px] pb-[50px] mb-[30px]">
+                                <div className="mb-[30px] leading-[30px]">
+                                    <Image
+                                        src={food1}
+                                        alt="food1"
+                                        className="rounded-[50%] shadow-xl mb-[53px]"
+                                    />
+                                    <p className="text-[18px] leading-[30px] font-bold">
+                                        Hazelnut Latte
+                                    </p>
+                                </div>
+                                <div className="flex flex-col grow gap-5 my-8">
+                                    <div className="flex gap-2 items-center">
+                                        <Check className="text-green-600" />
+                                        <p className="text-sm text-gray-600 font-medium">Hazelnut Syrup</p>
+                                    </div>
+                                    <div className="flex gap-2 items-center">
+                                        <Check className="text-green-600" />
+                                        <p className="text-sm text-gray-600 font-medium">Vanilla Whipped Cream</p>
+                                    </div>
+                                    <div className="flex gap-2 items-center">
+                                        <Check className="text-green-600" />
+                                        <p className="text-sm text-gray-600 font-medium">Ice / Hot</p>
+                                    </div>
+                                    <div className="flex gap-2 items-center">
+                                        <Check className="text-green-600" />
+                                        <p className="text-sm text-gray-600 font-medium">Sliced Banana on Top</p>
+                                    </div>
+                                </div>
+                                <p className="text-[#3C2A21] text-[25px] font-bold leading-[30px] text-center mb-[20px]">
+                                    IDR 25.000
                                 </p>
+                                <div className="flex justify-center">
+                                    <button className="btn btn-outline outline-[#3C2A21] hover:bg-[#3C2A21] hover:text-[#E5E5CB] rounded-full w-36 font-bold capitalize text-[#6A4029]">
+                                        <Link href="#">Order Now</Link>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        <div className="flex flex-col gap-3 pb-10">
-                            <h1 className="text-2xl text-[#3C2A21] font-bold text-center">IDR 30.000</h1>
-                            <button className="btn btn-outline outline-[#3C2A21] hover:bg-[#3C2A21] hover:text-[#E5E5CB] rounded-full w-36 font-bold capitalize text-[#6A4029]">
-                                Select
-                            </button>
-                        </div>
-                    </div>
-                    <div className="flex flex-col justify-center items-center px-10 border-[#6A4029] rounded-md border relative">
-                        <div className="absolute top-[-64px]">
-                            <Image
-                                className="rounded-full drop-shadow-2xl"
-                                src={food3}
-                                alt="chicken"
-                            />
-                        </div>
-                        <div className="text-center pt-20">
-                            <h3 className="font-bold text-[#3C2A21]">Chicken Wings</h3>
-                        </div>
-                        <div className="flex flex-col grow gap-5 my-8">
-                            <div className="flex gap-2 items-center">
-                                <Check className="text-green-600" />
-                                <p className="text-sm text-gray-600 font-medium">Wings</p>
-                            </div>
-                            <div className="flex gap-2 items-center">
-                                <Check className="text-green-600" />
-                                <p className="text-sm text-gray-600 font-medium">Drum Sticks</p>
-                            </div>
-                            <div className="flex gap-2 items-center">
-                                <Check className="text-green-600" />
-                                <p className="text-sm text-gray-600 font-medium">Mayonaise and Lemon</p>
-                            </div>
-                            <div className="flex gap-2 items-center">
-                                <Check className="text-green-600" />
-                                <p className="text-sm text-gray-600 font-medium">Hot Fried</p>
-                            </div>
-                            <div className="flex gap-2 items-center">
-                                <Check className="text-green-600" />
-                                <p className="text-sm text-gray-600 font-medium">Secret Recipe</p>
-                            </div>
-                            <div className="flex gap-2 items-center">
-                                <Check className="text-green-600" />
-                                <p className="text-sm text-gray-600 font-medium">
-                                    Buy 1 Get 1 only for Dine in
+                        <div className="carousel-item">
+                            <div className="w-80 flex flex-col justify-center items-center py-5 border-2 bg-white rounded-[10px] pt-[62px] pb-[50px] mb-[30px]">
+                                <div className="mb-[30px]">
+                                    <Image
+                                        src={food2}
+                                        alt="food2"
+                                        className="rounded-[50%] shadow-xl mb-[53px]"
+                                    />
+                                    <p className="text-[18px] leading-[30px] font-bold">
+                                        Pinky Promisee
+                                    </p>
+                                </div>
+                                <div className="flex flex-col grow gap-5 my-8">
+                                    <div className="flex gap-2 items-center">
+                                        <Check className="text-green-600" />
+                                        <p className="text-sm text-gray-600 font-medium">Hazelnut Syrup</p>
+                                    </div>
+                                    <div className="flex gap-2 items-center">
+                                        <Check className="text-green-600" />
+                                        <p className="text-sm text-gray-600 font-medium">Vanilla Whipped Cream</p>
+                                    </div>
+                                    <div className="flex gap-2 items-center">
+                                        <Check className="text-green-600" />
+                                        <p className="text-sm text-gray-600 font-medium">Ice / Hot</p>
+                                    </div>
+                                    <div className="flex gap-2 items-center">
+                                        <Check className="text-green-600" />
+                                        <p className="text-sm text-gray-600 font-medium">Sliced Banana on Top</p>
+                                    </div>
+                                </div>
+                                <p className="text-[#3C2A21] text-[25px] font-bold leading-[30px] text-center mb-[20px]">
+                                    IDR 30.000
                                 </p>
+                                <div className="flex justify-center">
+                                <div className="flex justify-center">
+                                    <button className="btn btn-outline outline-[#3C2A21] hover:bg-[#3C2A21] hover:text-[#E5E5CB] rounded-full w-36 font-bold capitalize text-[#6A4029]">
+                                        <Link href="#">Order Now</Link>
+                                    </button>
+                                </div>
+                                </div>
                             </div>
                         </div>
-                        <div className="flex flex-col gap-3 pb-10">
-                            <h1 className="text-2xl text-[#3C2A21] font-bold text-center">IDR 40.000</h1>
-                            <button className="btn bg-[#3C2A21] rounded-full w-36 font-bold capitalize text-[#E5E5CB]">
-                                Order Now
-                            </button>
+                        <div className="carousel-item">
+                            <div className="w-80 flex flex-col justify-center items-center py-5 border-2 bg-white rounded-[10px] pt-[62px] pb-[50px] mb-[30px]">
+                                <div className="mb-[30px]">
+                                    <Image
+                                        src={food3}
+                                        alt="food3"
+                                        className="rounded-[50%] shadow-xl mb-[53px]"
+                                    />
+                                    <p className="text-[18px] leading-[30px] font-bold">
+                                        Chicken Wings
+                                    </p>
+                                </div>
+                                <div className="flex flex-col grow gap-5 my-8">
+                                    <div className="flex gap-2 items-center">
+                                        <Check className="text-green-600" />
+                                        <p className="text-sm text-gray-600 font-medium">Hazelnut Syrup</p>
+                                    </div>
+                                    <div className="flex gap-2 items-center">
+                                        <Check className="text-green-600" />
+                                        <p className="text-sm text-gray-600 font-medium">Vanilla Whipped Cream</p>
+                                    </div>
+                                    <div className="flex gap-2 items-center">
+                                        <Check className="text-green-600" />
+                                        <p className="text-sm text-gray-600 font-medium">Ice / Hot</p>
+                                    </div>
+                                    <div className="flex gap-2 items-center">
+                                        <Check className="text-green-600" />
+                                        <p className="text-sm text-gray-600 font-medium">Sliced Banana on Top</p>
+                                    </div>
+                                </div>
+                                <p className="text-[#3C2A21] text-[25px] font-bold leading-[30px] text-center mb-[20px]">
+                                    IDR 25.000
+                                </p>
+                                <div className="flex justify-center">
+                                    <button className="btn btn-outline outline-[#3C2A21] hover:bg-[#3C2A21] hover:text-[#E5E5CB] rounded-full w-36 font-bold capitalize text-[#6A4029]">
+                                        <Link href="#">Order Now</Link>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
+
             {/* Map */}
             <section className="px-5 md:px-20 flex flex-col justify-center items-center mt-20">
                 <h1 className="text-3xl text-[#3C2A21] font-bold md:w-[350px] text-center">
