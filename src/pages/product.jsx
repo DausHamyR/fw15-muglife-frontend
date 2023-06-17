@@ -7,6 +7,8 @@ import food from '../../public/foods.png';
 function Product() {
     return (
         <>
+            <title>Product | MugLife</title>
+            
             <Header />
             <main className="pt-28">
                 <div className="flex flex-col-reverse md:flex-row items-start w-full">

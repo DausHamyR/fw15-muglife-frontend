@@ -23,6 +23,8 @@ import Link from "next/link";
 const Landing = () => {
     return (
         <div>
+            <title>Welcome to MugLife</title>
+
             <Navbar />
             {/* Header Landing */}
             <header className="hero h-[100vh] justify-start md:px-20 bg-[url('../assets/bg-landing.png')] ">
