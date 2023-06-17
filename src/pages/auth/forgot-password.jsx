@@ -46,7 +46,6 @@ function ForgotPassword() {
         try {
             setLoading(true)
             setErrorMessage("")
-            setLoading(true)
             const form = new URLSearchParams({
                 email: values.email
             })
