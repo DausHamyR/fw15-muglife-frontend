@@ -3,12 +3,32 @@ import Header from '@/components/Header';
 import Head from 'next/head';
 import Image from 'next/image';
 import React from 'react';
-import food from '../../assets/foods.png';
 import Link from 'next/link';
 import { IoIosArrowForward } from 'react-icons/io';
 import { IoPencilSharp } from 'react-icons/io5';
+import { FiUser } from 'react-icons/fi';
+import cookieConfig from '@/helpers/cookieConfig';
+import checkCredentials from '@/helpers/checkCredentials';
+import { withIronSessionSsr } from 'iron-session/next';
+import http from '@/helpers/http.helper';
+import moment from 'moment/moment';
 
-function Profile() {
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req, res }) {
+        const token = req.session?.token
+        checkCredentials(token, res, '/auth/login')
+        const {data} = await http(token).get('/profile')
+        return {
+            props: {
+                token,
+                profile: data.results
+            },
+        };
+    },
+    cookieConfig
+);
+
+function Profile({token, profile}) {
     return (
         <>
             <Head>
@@ -28,16 +48,19 @@ function Profile() {
                                         <button className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
                                             <IoPencilSharp size={13} className="text-white" />
                                         </button>
-                                        <div className="w-24 h-24 overflow-hidden rounded-full">
-                                            <Image src={food} width={96} height={96} alt="" />
+                                        <div className="w-24 h-24 overflow-hidden rounded-full flex justify-center items-center">
+                                            {profile.picture === null ? 
+                                                <FiUser size={100}/> :
+                                                <Image src={profile.picture} width={96} height={96} alt="" />
+                                            }
                                         </div>
                                     </div>
                                     <div className="w-full flex flex-col items-center justify-center">
-                                        <div className="h-full flex items-center justify-center text-primary text-lg font-semibold">Zulaikha</div>
-                                        <div className="h-full flex items-center justify-center text-primary text-sm">Zulaikha@mail.com</div>
+                                        <div className="h-full flex items-center justify-center text-primary text-lg font-semibold">{profile.fullName}</div>
+                                        <div className="h-full flex items-center justify-center text-primary text-sm">{profile.email}</div>
                                     </div>
                                     <div className="w-full flex flex-col items-center justify-center pt-7">
-                                        <div className="w-full flex items-center justify-center text-primary text-mg">Has been ordered 15 product</div>
+                                        <div className="w-full flex items-center justify-center text-primary text-mg">Has been ordered {profile.orderedId === null ? "0" : profile.orderedId} product</div>
                                     </div>
                                 </div>
                             </div>
@@ -53,17 +76,17 @@ function Profile() {
                                         <div className="flex-1 w-full flex flex-col items-start justify-between gap-7">
                                             <div className="flex w-full flex-col items-start gap-3 border-b border-primary">
                                                 <div className="text-lg text-accent">Email Address :</div>
-                                                <div className="text-primary">Zulaikha@mail.com</div>
+                                                <div className="text-primary">{profile.email}</div>
                                             </div>
                                             <div className="flex w-full flex-col items-start gap-3 border-b border-primary">
                                                 <div className="text-lg text-accent">Delivery Address:</div>
-                                                <div className="text-primary">Iskandar Street no. 67 Block A Near Bus Stop</div>
+                                                <div className="text-primary">{profile.address}</div>
                                             </div>
                                         </div>
                                         <div className="flex-1 w-full flex flex-col items-start justify-start gap-7">
                                             <div className="flex w-full flex-col items-start gap-3 border-b border-primary">
                                                 <div className="text-lg text-accent">Mobile Number :</div>
-                                                <div className="text-primary">Zulaikha@mail.com</div>
+                                                <div className="text-primary">{profile.phoneNumber}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -83,21 +106,23 @@ function Profile() {
                                         <div className="flex-1 w-full flex flex-col items-start justify-between gap-7">
                                             <div className="flex w-full flex-col items-start gap-3 border-b border-primary">
                                                 <div className="text-lg text-accent">Display Names :</div>
-                                                <div className="text-primary">Zulaikha@mail.com</div>
+                                                <div className="text-primary">{profile.fullName}</div>
                                             </div>
                                             <div className="flex w-full flex-col items-start gap-3 border-b border-primary">
                                                 <div className="text-lg text-accent">Fisrt Name:</div>
-                                                <div className="text-primary">Iskandar Street no. 67 Block A Near Bus Stop</div>
+                                                <div className="text-primary">{profile.fullName?.split(' ')[0]}</div>
                                             </div>
                                             <div className="flex w-full flex-col items-start gap-3 border-b border-primary">
                                                 <div className="text-lg text-accent">Last Name:</div>
-                                                <div className="text-primary">Iskandar Street no. 67 Block A Near Bus Stop</div>
+                                                <div className="text-primary">{profile.fullName?.split(' ').pop()}</div>
                                             </div>
                                         </div>
                                         <div className="flex-1 w-full flex flex-col items-start justify-start gap-7">
                                             <div className="flex w-full flex-col items-start gap-3 border-b border-primary">
                                                 <div className="text-lg text-accent">DD/MM/YY</div>
-                                                <div className="text-primary">23/12/2021</div>
+                                                <div className="text-primary">
+                                                    {profile.birthDate === null ? "-" : moment(profile.birthDate).format('DD/MM/YY')}
+                                                </div>
                                             </div>
                                             <div className="flex w-full flex-col items-start gap-3 ">
                                                 <div className="text-lg text-primary flex items-center gap-3">
@@ -130,9 +155,9 @@ function Profile() {
                                         </Link>
                                     </div>
                                     <div className="w-full flex flex-col items-center justify-center">
-                                        <button className="w-full btn btn-neutral text-primary capitalize rounded-xl flex items-center justify-between">
+                                        <Link href='/api/logout' className="w-full btn btn-neutral text-primary capitalize rounded-xl flex items-center justify-between">
                                             Logout <IoIosArrowForward />
-                                        </button>
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
