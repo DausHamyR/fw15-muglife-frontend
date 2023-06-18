@@ -15,20 +15,25 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import cookieConfig from '@/helpers/cookieConfig';
 
-export const getServerSideProps = withIronSessionSsr(async function getServerSideProps({ req, res }) {
-    const token = req.session?.token;
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req, res }) {
+        const token = req.session?.token;
 
-    if (token) {
-        res.setHeader('location', '/');
-        res.statusCode = 302;
-        res.end();
-        return { prop: { token } };
-    }
+        if (token) {
+            res.setHeader("location", "/");
+            res.statusCode = 302;
+            res.end();
+            return { prop: {token} };
+        }
 
-    return {
-        props: {},
-    };
-}, cookieConfig);
+        return {
+            props: {
+                token: null
+            },
+        };
+    },
+    cookieConfig
+);
 
 const validationSchema = Yup.object({
     email: Yup.string().email('Email is invalid').required('Email is invalid'),
@@ -56,7 +61,7 @@ function Login() {
             setLoading(false);
         }
         if (data.success === true) {
-            router.push('/user/profile');
+            router.push('/');
             setLoading(false);
         }
     };
