@@ -2,16 +2,17 @@ import Image from "next/image";
 import coffee from "@/assets/cold-brew.png";
 import Navbar from "@/components/Header";
 import Footer from "@/components/Footer";
-
+import ProductImage from '@/assets/ecommerce-default-product.png'
 import { withIronSessionSsr } from "iron-session/next";
 import { useRouter } from 'next/router';
 import cookieConfig from '@/helpers/cookieConfig';
 import React from "react";
-import { Link } from "react-feather";
+import Link from "next/link";
+import http from "@/helpers/http.helper";
 
 export const getServerSideProps = withIronSessionSsr(
-    async function getServerSideProps({ req }) {
-        const token = req.session?.token;
+    async function getServerSideProps({ req, res }) {
+        const token = req.session?.token || null;
         return {
             props: {
                 token,
@@ -22,9 +23,37 @@ export const getServerSideProps = withIronSessionSsr(
 );
 
 const ProductDetails = ({token}) => {
-
+    const {query: {id}} = useRouter();
     const [showModal, setShowModal] = React.useState(false);
-    console.log(token)
+    const [product, setProduct] = React.useState({})
+    const [delivery, setDelivery] = React.useState([])
+
+    const getProductDetail = React.useCallback(async()=>{
+        try {
+            const {data} = await http().get("/products/"+ id)
+            console.log(data)
+            setProduct(data.results)
+        } catch (error) {
+            const message = error?.response?.data?.message
+            return console.log(message)
+        }
+    },[id])
+
+    const getDelivery = React.useCallback(async()=>{
+        try {
+            const {data} = await http().get("/delivery-method")
+            setDelivery(data.results)
+            console.log(data.results)
+        } catch (error) {
+            const message = error?.response?.data?.message
+            return console.log(message)
+        }
+    },[])
+
+    React.useEffect(()=>{
+        getProductDetail()
+        getDelivery()
+    }, [getProductDetail, getDelivery])
 
     React.useEffect(() => {
       if(!token) {
@@ -45,10 +74,10 @@ const ProductDetails = ({token}) => {
             {showModal && (
                 <dialog id="my_modal_1" className="modal bg-white bg-opacity-60" open>
                 <form method="dialog" className="modal-box bg-white">
-                    <h3 className="font-bold text-lg">Hello!</h3>
-                    <p className="py-4">Press ESC key or click the button below to close</p>
+                    <h3 className="font-bold text-lg">Hallo!</h3>
+                    <p className="py-4">Want to order? please do login first</p>
                     <div className="modal-action">
-                    <Link href="/auth/login" className="btn">Close</Link>
+                    <Link href="/auth/login" className="btn w-36">Ok</Link>
                     </div>
                 </form>
                 </dialog>
@@ -60,13 +89,14 @@ const ProductDetails = ({token}) => {
                     <div className='ml-[5%]'>
                         <div className='flex gap-0.5 text-gray-500'>
                             <div>Favorite & Promo {'>'}</div>
-                            <div className="text-[#3C2A21] font-semibold">Cold Brew</div>
+                            <div className="text-[#3C2A21] font-semibold">{product?.name}</div>
                         </div>
 
                         <div className='flex flex-col justify-center items-center mt-[40px]'>
-                            <Image src={coffee} className="rounded-full h-[400px] w-[400px]" alt="desc" ></Image>
+                            {product.picture ? (<Image width={400} height={400} src={product.picture} className="rounded-full h-[400px] w-[400px]" alt="Product-Image"/>) 
+                                : (<Image src={ProductImage} className="rounded-full h-[400px] w-[400px]" alt="Product-Image"/>) }
                             <div className='text-center'>
-                                <div className='font-bold text-[65px] text-[#3C2A21]'>COLD BREW</div>
+                                <div className='font-bold text-[65px] text-[#3C2A21]'>{product?.name}</div>
                                 <div className='font-medium text-[35px] text-[#745241] mb-[42px]'>IDR 30.000</div>
                                 <div className='flex flex-col gap-[25px]'>
                                     <button className='font-semibold bg-[#D5CEA3] hover:bg-[#d8d2a7] text-[#3C2A21] py-5 w-full rounded-lg'>Add to Cart</button>
@@ -85,9 +115,7 @@ const ProductDetails = ({token}) => {
                             </div>
                             <div className='w-96 mt-[43px]'>
                                 <div className='break-all text-gray-500'>
-                                    Cold brewing is a method of brewing that combines ground coffee and cool water
-                                    and uses time instead of heat to extract the flavor. It is brewed in small batches
-                                    and steeped for as long as 48 hours.
+                                    {product?.descriptions}
                                 </div>
                             </div>
 
@@ -104,9 +132,14 @@ const ProductDetails = ({token}) => {
                         <div className='flex flex-col justify-center items-center mt-[46px] gap-[27px]'>
                             <div className="text-[#745241] font-semibold">Choose Delivery Method</div>
                             <div className='flex gap-5'>
-                                <button className='bg-[#745241] text-[#D5CEA3] hover:bg-[#8f6a57] py-3 rounded-lg px-[26px] drop-shadow-lg'>Dine In</button>
+                                {delivery.map(items=>{
+                                    return(
+                                        <button disabled={items.name !== product.deliveryMethod } key={`delivery-${items.id}`} className='btn normal-case border-none bg-[#F4F4F8] text-[#D5CEA3] hover:bg-[#8f6a57] py-3 rounded-lg px-[26px] drop-shadow-lg'>{items.name}</button>
+                                    )
+                                })}
+                                {/* <button className='bg-[#745241] text-[#D5CEA3] hover:bg-[#8f6a57] py-3 rounded-lg px-[26px] drop-shadow-lg'>Dine In</button>
                                 <button className='bg-[#F4F4F8] text-[#D5CEA3] hover:bg-[#8f6a57] py-3 rounded-lg px-[26px] drop-shadow-lg'>Door Delivery</button>
-                                <button className='bg-[#F4F4F8] text-[#D5CEA3] hover:bg-[#8f6a57] py-3 rounded-lg px-[26px] drop-shadow-lg'>Pick Up</button>
+                                <button className='bg-[#F4F4F8] text-[#D5CEA3] hover:bg-[#8f6a57] py-3 rounded-lg px-[26px] drop-shadow-lg'>Pick Up</button> */}
                             </div>
                         </div>
                         <div className='flex justify-center items-center mt-10'>
@@ -129,7 +162,7 @@ const ProductDetails = ({token}) => {
                         <Image src={coffee} className="rounded-full" width="50" height="50" alt="desc" ></Image>
                     </div>
                     <div className='grow'>
-                        <div className="text-[#745241] font-semibold">COLD BREW</div>
+                        <div className="text-[#745241] font-semibold">{product?.name}</div>
                         <div className="text-[#745241]">x1 (Large)</div>
                         <div className="text-[#745241]">x1 (Regular)</div>
                     </div>
