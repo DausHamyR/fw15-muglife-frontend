@@ -11,6 +11,7 @@ import Navbar from "../../components/Header";
 const AdminChat = () => {
     return (
         <>
+            <title>Chat | MugLife</title>
             <Navbar />
             <div className="font-poppins pt-[100px]">
                 <div className="lg:bg-[url('../assets/background-chat.png')] bg-cover bg-no-repeat pb-[89px]">
