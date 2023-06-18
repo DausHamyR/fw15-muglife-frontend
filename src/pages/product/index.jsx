@@ -2,35 +2,22 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import Image from 'next/image';
 import React from 'react';
+import ProductImage from '@/assets/ecommerce-default-product.png'
 import food from '../../../public/foods.png';
 import http from '@/helpers/http.helper';
-import { withIronSessionSsr } from "iron-session/next";
 import { useRouter } from 'next/router';
-import cookieConfig from '@/helpers/cookieConfig';
 
-export const getServerSideProps = withIronSessionSsr(
-    async function getServerSideProps({ req }) {
-        const token = req.session?.token;
-        return {
-            props: {
-                token,
-            },
-        };
-    },
-    cookieConfig
-);
-
-function Product({token}) {
-
+function Product() {
     const [products, setProducts] = React.useState([])
     const [category, setCategory] = React.useState([])
     const [inCategory, setInCategory] = React.useState("")
     const router = useRouter()
 
-    const getProduct = React.useCallback(async(category="")=>{
+    const getProduct = React.useCallback(async(category="", limit=50)=>{
         try {
-            const {data} = await http().get("/products", {params: {category}})
+            const {data} = await http().get("/products", {params: {category, limit}})
             setProducts(data.results)
+            console.log(data)
         } catch (error) {
             const message = error?.response?.data?.message
             return console.log(message)
@@ -41,6 +28,7 @@ function Product({token}) {
         try {
             const {data} = await http().get("/categories")
             setCategory(data.results)
+            console.log(data)
         } catch (error) {
             const message = error?.response?.data?.message
             return console.log(message)
@@ -95,9 +83,9 @@ function Product({token}) {
                     <div className="overflow-hidden w-full lg:w-[73%] flex flex-col items-start justify-center h-full pt-11 ">
                         <div className="w-full flex justify-center items-center text-black px-2 mb-11">
                             <div className="px-11 xl:px-24 w-full flex items-center justify-between gap-5 overflow-scroll scrollbar-hide">
-                                <div className="flex justify-center items-center ">
+                                {/* <div className="flex justify-center items-center ">
                                     <button className="text-secondary text-lg font-semibold h-full border-b-2 border-secondary w-40">Fafourite Product</button>
-                                </div>
+                                </div> */}
                                 {category.map(items =>{
                                     return(
                                         <div 
@@ -116,7 +104,8 @@ function Product({token}) {
                                 return(
                                     <button onClick={()=>doDetailProduct(items.id)} key={`product${items.id}`} className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
                                         <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
-                                            <Image src={items.picture} width={128} height={128} alt="" />
+                                            {items.picture ? (<Image width={128} height={128} src={items.picture} alt="Product-Image"/>) 
+                                            : (<Image src={ProductImage} alt="Product-Image"/>) }
                                         </div>
                                         <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">{items.name}</div>
                                         <div className="text-lg text-secondary font-semibold">{`Rp${Number(items.variant[1].price).toLocaleString("id")}`}</div>
