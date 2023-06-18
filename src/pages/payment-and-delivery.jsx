@@ -11,7 +11,7 @@ function PaymmentAndDelivery() {
     return (
         <>
             <Head>
-                <title>Payment & Delivery</title>
+                <title>Payment & Delivery | MugLife</title>
             </Head>
             <Header />
             <main className="pt-28">
