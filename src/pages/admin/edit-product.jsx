@@ -29,6 +29,7 @@ const EditProduct = () => {
     };
     return (
         <>
+            <title>Edit Product | MugLife</title>
             {/* Navbar */}
             <Navbar></Navbar>
 
