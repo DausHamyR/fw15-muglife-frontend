@@ -20,33 +20,51 @@ import Footer from "@/components/Footer";
 import Navbar from "../components/Header";
 import Link from "next/link";
 
-const Landing = () => {
+import { withIronSessionSsr } from "iron-session/next";
+import cookieConfig from "@/helpers/cookieConfig";
+
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req, res }) {
+        const token = req.session?.token || null;
+        return {
+            props: {
+                token,
+            },
+        };
+        
+    },
+    cookieConfig
+);
+
+const Landing = ({token}) => {
     return (
         <div>
             <title>Welcome to MugLife</title>
 
-            <Navbar />
+            <Navbar token={token} />
             {/* Header Landing */}
-            <header className="hero h-[100vh] justify-start md:px-20 bg-[url('../assets/bg-landing.png')] ">
-                <div className="hero-content text-left text-neutral-content">
-                    <div className="max-w-md">
-                        <h1 className="mb-5 text-5xl text-[#D5CEA3] font-bold">
+            <header className="hero h-[100vh] w-full md:px-20 bg-[url('../assets/bg-landing.png')] ">
+                <div className="flex gap-10 flex-col md:flex-row text-left justify-between text-neutral-content w-full h-full">
+                    <div className="flex-1 flex px-6 md:px-0 pt-60 md:pr-24 flex-col gap-5">
+                        <h1 className="text-6xl text-white font-bold">
                             Start Your Day with Coffee and Good Meals
                         </h1>
-                        <p className="mb-5 text-[#E5E5CB]">
+                        <p className="text-white">
                             We provide high quality beans, good taste, and healthy meals made
                             by love just for you. Start your day with us for a bigger smile!
                         </p>
-                        <button className="btn bg-[#D5CEA3] text-[#3C2A21] hover:text-[#D5CEA3] px-10 font-bold capitalize">
-                            Get Started
-                        </button>
+                        <div className="w-full flex justify-start">
+                            <button className="btn bg-[#D5CEA3] text-[#3C2A21] border-none hover:text-[#D5CEA3] px-10 font-bold capitalize">
+                                Get Started
+                            </button>
+                        </div>
                     </div>
-                    <div className="lg:flex w-full px-3 lg:px-[150px] flex-row">
-                        <div className="pt-[20px] relative">
-                            <BiSearch className="absolute top-9 left-5 w-8 h-8" />
+                    <div className="flex-1 flex flex-row py-2 md:py-36">
+                        <div className="pt-[20px] relative w-full px-16">
+                            <BiSearch className="absolute top-9 left-20 w-8 h-8" />
                             <input
                                 placeholder="Search"
-                                className="focus:outline-none bg-[#EFEEEE] py-[17px] pl-[75px] lg:pr-10 font-[900] rounded-[30px]"
+                                className="flex justify-end w-full h-16 pl-16 focus:outline-none bg-[#EFEEEE] rounded-[30px]"
                             />
                         </div>
                     </div>
