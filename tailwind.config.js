@@ -17,6 +17,8 @@ module.exports = withMT ({
           'history_bg': "url('../../public/bg-2.png')",
           'payment-pattern': "url('../../public/payment.jpg')",
           'order_bg': "url('../../public/bg-1.png')",
+          'profile-pattern': "url('../../public/profile.jpg')",
+
 
       },
       fontFamily: {
