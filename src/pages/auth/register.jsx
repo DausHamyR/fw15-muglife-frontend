@@ -36,8 +36,12 @@ function Register() {
                 setErrorMessage('Enter the correct mobile number')
                 return
             }
-            if(phoneNumber.length < 10){
-                setErrorMessage('Phone Number less than 10')
+            if(phoneNumber.length < 11){
+                setErrorMessage('Phone Number less than 11')
+                return
+            }
+            if(phoneNumber.length > 12){
+                setErrorMessage('Mobile number cannot be more than 12')
                 return
             }
             const body = new URLSearchParams({email, password, phoneNumber}).toString()

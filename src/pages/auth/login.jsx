@@ -27,9 +27,7 @@ export const getServerSideProps = withIronSessionSsr(
         }
 
         return {
-            props: {
-                token: null
-            },
+            props: {},
         };
     },
     cookieConfig
@@ -54,14 +52,14 @@ function Login() {
             password: values.password
         }).toString();
 
-        const {data} = await axios.post("http://localhost:3000/api/login", form);
+        const {data} = await axios.post("/api/login", form);
         console.log(data)
         if(data.success === false){
             setErrorMessage("Email or Password wrong");
             setLoading(false);
         }
         if(data.success === true){
-            router.push("/");
+            router.push("/user/profile");
             setLoading(false);
         }
     };
