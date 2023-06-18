@@ -1,16 +1,58 @@
 import Image from "next/image";
-import Link from "next/link";
-import coffee from "../assets/cold-brew.png";
-import Navbar from "../components/Header";
-import Footer from "../components/Footer";
+import coffee from "@/assets/cold-brew.png";
+import Navbar from "@/components/Header";
+import Footer from "@/components/Footer";
 
-const ProductDetails = () => {
+import { withIronSessionSsr } from "iron-session/next";
+import { useRouter } from 'next/router';
+import cookieConfig from '@/helpers/cookieConfig';
+import React from "react";
+import { Link } from "react-feather";
+
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req }) {
+        const token = req.session?.token;
+        return {
+            props: {
+                token,
+            },
+        };
+    },
+    cookieConfig
+);
+
+const ProductDetails = ({token}) => {
+
+    const [showModal, setShowModal] = React.useState(false);
+    console.log(token)
+
+    React.useEffect(() => {
+      if(!token) {
+        setShowModal(true)
+      }
+      if(token){
+        setShowModal(false)
+      }
+    }, []);
+
     return (
         <>
             <title>Detail Product | MugLife</title>
 
             {/* Navbar */}
             <Navbar></Navbar>
+
+            {showModal && (
+                <dialog id="my_modal_1" className="modal bg-white bg-opacity-60" open>
+                <form method="dialog" className="modal-box bg-white">
+                    <h3 className="font-bold text-lg">Hello!</h3>
+                    <p className="py-4">Press ESC key or click the button below to close</p>
+                    <div className="modal-action">
+                    <Link href="/auth/login" className="btn">Close</Link>
+                    </div>
+                </form>
+                </dialog>
+            )}
 
             {/* Konten */}
             <main className='relative bg-[#E5E5CB] pt-[150px] pb-[10%]'>
