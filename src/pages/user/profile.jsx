@@ -85,22 +85,23 @@ function Profile({ token, profile }) {
             <Head>
                 <title>User Profile</title>
             </Head>
-            <Header />
+            <Header token={token} />
             <main className="pt-28">
                 <Formik
                     initialValues={{
-                        fullName: profile?.fullName,
-                        username: profile?.username,
-                        email: profile?.email,
+                        fullName: profile?.fullName || '',
+                        username: profile?.username || '',
+                        email: profile?.email || '',
                         phoneNumber: profile?.phoneNumber,
                         gender: profile?.gender ? '1' : '0',
-                        address: profile?.address,
-                        birthDate: profile?.birthDate && moment(profile.birthDate).format('YYYY/MM/DD'),
+                        address: profile?.address || '',
+                        birthDate: profile?.birthDate && moment(profile.birthDate).format('YYYY/MM/DD') || '',
                     }}
                     onSubmit={editProfile}
                     enableReinitialize
                 >
                     {({ handleSubmit, handleChange, handleBlur, errors, touched, values }) => (
+                        <>
                         <form onSubmit={handleSubmit} className="w-full bg-profile-pattern bg-no-repeat bg-cover py-16 px-7 lg:px-36 xl:px-64">
                             <div className="w-full mb-11">
                                 <div className="w-72 text-4xl text-white font-semibold capitalize ">User Profile</div>
@@ -115,7 +116,7 @@ function Profile({ token, profile }) {
                                                     <IoPencilSharp size={13} className="text-white" />
                                                 </label>
                                                 <div className="w-24 h-24 overflow-hidden rounded-full flex justify-center items-center">
-                                                    {profile.picture === null ? <FiUser size={100} /> : <Image src={profile.picture} width={96} height={96} alt="" />}
+                                                    {profile?.picture === null ? <FiUser size={100} /> : <Image src={profile.picture} width={96} height={96} alt="" />}
                                                 </div>
                                             </div>
                                             <div className="w-full flex flex-col items-center justify-center">
@@ -195,14 +196,14 @@ function Profile({ token, profile }) {
                                                     </div>
                                                     <div className="flex w-full flex-col items-start gap-3 ">
                                                         <div className="text-lg text-primary flex items-center gap-3">
-                                                            <input type="radio" name="gender" id="genChoiceMale" value="0" />
-                                                            <label onChange={handleChange} onBlur={handleBlur} htmlFor="genChoiceMale">
+                                                            <input onChange={handleChange} onBlur={handleBlur} type="radio" name="gender" id="genChoiceMale" value="0" />
+                                                            <label htmlFor="genChoiceMale">
                                                                 Male
                                                             </label>
                                                         </div>
                                                         <div className="text-lg text-primary flex items-center gap-3">
-                                                            <input type="radio" name="gender" id="genChoiceFem" value="1" />
-                                                            <label onChange={handleChange} onBlur={handleBlur} htmlFor="genChoiceFem">
+                                                            <input onChange={handleChange} onBlur={handleBlur} type="radio" name="gender" id="genChoiceFem" value="1" />
+                                                            <label htmlFor="genChoiceFem">
                                                                 Female
                                                             </label>
                                                         </div>
@@ -228,9 +229,8 @@ function Profile({ token, profile }) {
                                             </div>
                                             <div className="w-full flex flex-col items-center justify-center mt-7">
                                                 <button
-                                                    onClick={() => {
-                                                        openModal();
-                                                    }}
+                                                    type="button"
+                                                    onClick={()=>openModal()}
                                                     className="w-full btn btn-neutral text-primary capitalize rounded-xl flex items-center justify-between"
                                                 >
                                                     Edit Password <IoIosArrowForward />{' '}
@@ -246,11 +246,12 @@ function Profile({ token, profile }) {
                                 </div>
                             </div>
                         </form>
+                        </>
                     )}
                 </Formik>
             </main>
             <Footer />
-            {modalOpen && <ChangePasswordModal visibleModal={modalOpen} />}
+            {modalOpen && <ChangePasswordModal token={token} />}
         </>
     );
 }
