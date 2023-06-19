@@ -1,21 +1,6 @@
-import cookieConfig from '@/helpers/cookieConfig';
 import http from '@/helpers/http.helper';
-import { withIronSessionSsr } from 'iron-session/next';
 import React from 'react';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
-
-export const getServerSideProps = withIronSessionSsr(
-    async function getServerSideProps({ req, res }) {
-        const token = req.session?.token
-        checkCredentials(token, res, '/auth/login')
-        return {
-            props: {
-                token
-            },
-        };
-    },
-    cookieConfig
-);
 
 const ChangePasswordModal = ({ visibleModal, token }) => {
     const [closeModal, setCloseModal] = React.useState(visibleModal);
@@ -27,6 +12,7 @@ const ChangePasswordModal = ({ visibleModal, token }) => {
     const [successMessage, setSuccessMessage] = React.useState('')
 
     const doChangePassword = async (event) => {
+        console.log(token)
         setErrorMessage('')
         try{
             setLoading(true)
@@ -34,6 +20,7 @@ const ChangePasswordModal = ({ visibleModal, token }) => {
             const {value: oldPassword} = event.target.oldPassword
             const {value: newPassword} = event.target.newPassword
             const {value: confirmNewPassword} = event.target.confirmNewPassword
+            console.log(oldPassword, newPassword, confirmNewPassword)
             if(newPassword !== confirmNewPassword){
                 setErrorMessage('Password and Confirm Password do not match')
                 setLoading(false)
