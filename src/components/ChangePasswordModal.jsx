@@ -4,6 +4,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 
 const ChangePasswordModal = ({ token }) => {
     const [closeModal, setCloseModal] = React.useState(true);
+
     const close = () => {
         setCloseModal(false);
     };
@@ -12,6 +13,7 @@ const ChangePasswordModal = ({ token }) => {
     const [successMessage, setSuccessMessage] = React.useState('')
 
     const doChangePassword = async (event) => {
+        console.log(token)
         setErrorMessage('')
         try{
             setLoading(true)
@@ -19,6 +21,7 @@ const ChangePasswordModal = ({ token }) => {
             const {value: oldPassword} = event.target.oldPassword
             const {value: newPassword} = event.target.newPassword
             const {value: confirmNewPassword} = event.target.confirmNewPassword
+            console.log(oldPassword, newPassword, confirmNewPassword)
             if(newPassword !== confirmNewPassword){
                 setErrorMessage('Password and Confirm Password do not match')
                 setLoading(false)

@@ -12,23 +12,21 @@ import checkCredentials from '@/helpers/checkCredentials';
 import { withIronSessionSsr } from 'iron-session/next';
 import http from '@/helpers/http.helper';
 import moment from 'moment/moment';
-import { Formik } from 'formik';
+import { Formik, Field } from 'formik';
 import ChangePasswordModal from '@/components/ChangePasswordModal';
 
 export const getServerSideProps = withIronSessionSsr(async function getServerSideProps({ req, res }) {
     const token = req.session?.token;
     checkCredentials(token, res, '/auth/login');
-    const { data } = await http(token).get('/profile');
     return {
         props: {
             token,
-            profile: data.results,
         },
     };
 }, cookieConfig);
 
-function Profile({ token, profile }) {
-    const [profilee, setProfile] = React.useState({});
+function Profile({ token }) {
+    const [profile, setProfile] = React.useState({});
     const [editFullname, setEditFullname] = React.useState(false);
     const [editUsername, setEditUsername] = React.useState(false);
     const [editEmail, setEditEmail] = React.useState(false);
@@ -37,7 +35,17 @@ function Profile({ token, profile }) {
     const [editAddress, setEditAddress] = React.useState(false);
     const [editbirthDate, setEditbirthDate] = React.useState(false);
     const [selectedPicture, setSelectedPicture] = React.useState(false);
+    const [editContacts, setEditContacts] = React.useState(false);
+    const [editDetails, setEditDetails] = React.useState(false);
     const [modalOpen, setModalOpen] = React.useState(false);
+
+    React.useEffect(() => {
+        const getProfile = async() => {
+            const {data} = await http(token).get('/profile')
+            setProfile(data.results)
+        }
+        getProfile()
+    }, [token])
 
     const editProfile = async (values) => {
         setOpenModal(true);
@@ -67,6 +75,8 @@ function Profile({ token, profile }) {
         setEditGender(false);
         setEditAddress(false);
         setEditBirthday(false);
+        setEditContacts(false);
+        setEditDetails(false);
     };
 
     const openModal = () => {
@@ -132,7 +142,7 @@ function Profile({ token, profile }) {
                                 <div className="w-full md:basis-4/6">
                                     <div className="w-full rounded-2xl  bg-accent pb-4">
                                         <div className="relative w-full flex flex-col items-start justify-start gap-7 px-5 md:px-11 py-11 rounded-t-2xl  bg-white">
-                                            <button className="absolute top-7 right-7 w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+                                            <button onClick={ ()=> setEditContacts(true) } className="absolute top-7 right-7 w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
                                                 <IoPencilSharp size={20} className="text-white" />
                                             </button>
                                             <div className="text-primary text-xl font-semibold">Contacts</div>
@@ -140,23 +150,26 @@ function Profile({ token, profile }) {
                                                 <div className="flex-1 w-full flex flex-col items-start justify-between gap-7">
                                                     <div className="flex w-full flex-col items-start gap-3 border-b border-primary">
                                                         <div className="text-lg text-accent">Email Address :</div>
-                                                        <label onClick={() => setEditEmail(true)}>
+                                                        {!editContacts ? 
+                                                            <div className="text-primary">{profile.email}</div> :
                                                             <input onChange={handleChange} onBlur={handleBlur} value={values.email} type="email" className="text-primary" />
-                                                        </label>
+                                                        }
                                                     </div>
                                                     <div className="flex w-full flex-col items-start gap-3 border-b border-primary">
                                                         <div className="text-lg text-accent">Delivery Address:</div>
-                                                        <label onClick={() => setEditAddress(true)}>
+                                                        {!editContacts ? 
+                                                            <div className="text-primary">{profile.address}</div> :
                                                             <input onChange={handleChange} onBlur={handleBlur} value={values.address} type="text" className="text-primary" />
-                                                        </label>
+                                                        }
                                                     </div>
                                                 </div>
                                                 <div className="flex-1 w-full flex flex-col items-start justify-start gap-7">
                                                     <div className="flex w-full flex-col items-start gap-3 border-b border-primary">
                                                         <div className="text-lg text-accent">Mobile Number :</div>
-                                                        <label onClick={() => setEditphoneNumber(true)}>
-                                                            <input onChange={handleChange} onBlur={handleBlur} value={values.phoneNumber} type="number" className="text-primary" />
-                                                        </label>
+                                                        {!editContacts ? 
+                                                            <div className="text-primary">{profile.phoneNumber}</div> :
+                                                            <input onChange={handleChange} onBlur={handleBlur} value={values.phoneNumber} type="number" />
+                                                        }
                                                     </div>
                                                 </div>
                                             </div>
@@ -168,7 +181,7 @@ function Profile({ token, profile }) {
                                 <div className="w-full md:basis-4/6">
                                     <div className="w-full min-h-[350px] rounded-2xl  bg-accent pb-4">
                                         <div className="relative w-full h-[96%] flex flex-col items-start justify-start gap-5 px-5 md:px-11 py-11 rounded-t-2xl  bg-white">
-                                            <button className="absolute top-7 right-7 w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+                                            <button onClick={ ()=> setEditDetails(true) } className="absolute top-7 right-7 w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
                                                 <IoPencilSharp size={20} className="text-white" />
                                             </button>
                                             <div className="text-primary text-xl font-semibold">Details</div>
@@ -176,23 +189,33 @@ function Profile({ token, profile }) {
                                                 <div className="flex-1 w-full flex flex-col items-start justify-between gap-7">
                                                     <div className="flex w-full flex-col items-start gap-3 border-b border-primary">
                                                         <div className="text-lg text-accent">Display Names :</div>
-                                                        <label onClick={() => setEditEmail(true)}>
-                                                            <input onChange={handleChange} onBlur={handleBlur} value={values.email} type="email" className="text-primary" />
-                                                        </label>
+                                                        {!editDetails ? 
+                                                            <div className="text-primary">{profile.fullName}</div> :
+                                                            <input onChange={handleChange} onBlur={handleBlur} value={values.fullName} type="text" className="text-primary" />
+                                                        }
                                                     </div>
                                                     <div className="flex w-full flex-col items-start gap-3 border-b border-primary">
                                                         <div className="text-lg text-accent">Fisrt Name:</div>
-                                                        <div className="text-primary">{profile.fullName?.split(' ')[0]}</div>
+                                                        {!editDetails ? 
+                                                            <div className="text-primary">{profile.fullName?.split(' ')[0]}</div> :
+                                                            <input onChange={handleChange} onBlur={handleBlur} value={values.fullName} type="text" className="text-primary" />
+                                                        }
                                                     </div>
                                                     <div className="flex w-full flex-col items-start gap-3 border-b border-primary">
                                                         <div className="text-lg text-accent">Last Name:</div>
-                                                        <div className="text-primary">{profile.fullName?.split(' ').pop()}</div>
+                                                        {!editDetails ? 
+                                                            <div className="text-primary">{profile.fullName?.split(' ').pop()}</div> :
+                                                            <input onChange={handleChange} onBlur={handleBlur} value={values.fullName} type="text" className="text-primary" />
+                                                        }
                                                     </div>
                                                 </div>
                                                 <div className="flex-1 w-full flex flex-col items-start justify-start gap-7">
                                                     <div className="flex w-full flex-col items-start gap-3 border-b border-primary">
                                                         <div className="text-lg text-accent">DD/MM/YY</div>
-                                                        <div className="text-primary">{profile.birthDate === null ? '-' : moment(profile.birthDate).format('DD/MM/YY')}</div>
+                                                        {!editDetails ? 
+                                                            <div className="text-primary">{profile.birthDate === null ? '-' : moment(profile.birthDate).format('DD/MM/YY')}</div> :
+                                                            <input onChange={handleChange} onBlur={handleBlur} value={values.fullName} type="date" className="text-primary" />
+                                                        }
                                                     </div>
                                                     <div className="flex w-full flex-col items-start gap-3 ">
                                                         <div className="text-lg text-primary flex items-center gap-3">
@@ -205,8 +228,7 @@ function Profile({ token, profile }) {
                                                             <input onChange={handleChange} onBlur={handleBlur} type="radio" name="gender" id="genChoiceFem" value="1" />
                                                             <label htmlFor="genChoiceFem">
                                                                 Female
-                                                            </label>
-                                                        </div>
+                                                        </label>
                                                     </div>
                                                 </div>
                                             </div>
