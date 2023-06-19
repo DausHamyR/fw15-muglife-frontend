@@ -8,7 +8,23 @@ import Navbar from '../../components/Header'
 import { BiTrash } from "react-icons/bi";
 import ModalDelete from '../../components/modal-delete';
 
-const EditProduct = () => {
+import cookieConfig from '@/helpers/cookieConfig';
+import { withIronSessionSsr } from "iron-session/next";
+import checkCredentials from "@/helpers/checkCredentials";
+
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req, res }) {
+    const token = req.session?.token;
+    checkCredentials(token, res, '/auth/login');
+
+    return {
+        props: {
+            token,
+        },
+    };
+}, cookieConfig);
+
+const EditProduct = ({token}) => {
     let [count, setCount] = React.useState(1);
     let increment = () => {
         if (count === 20) {
@@ -31,7 +47,7 @@ const EditProduct = () => {
         <>
             <title>Edit Product | MugLife</title>
             {/* Navbar */}
-            <Navbar></Navbar>
+            <Navbar token={token}></Navbar>
 
             {/* Konten */}
             <main className='relative bg-[#E5E5CB] pt-[150px] pb-[10%]'>

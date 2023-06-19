@@ -7,6 +7,7 @@ import http from '@/helpers/http.helper';
 import { useDispatch, useSelector } from 'react-redux';
 import { setProfile } from '@/redux/reducers/profile';
 import User from '@/assets/user.png'
+import MenuBar from './MenuBar';
 
 function Header({token}) {
     const profile = useSelector(state => state.profile.data);
@@ -54,12 +55,12 @@ function Header({token}) {
                     </Link>
                 </div>}
                 {token && <div className="flex-1 hidden lg:flex justify-end items-center gap-3">
-                    <Link href="/profile" className="w-16 h-16 overflow-hidden rounded-2xl">
+                    <Link href="/user/profile" className="w-16 h-16 overflow-hidden rounded-2xl">
                         {profile?.picture ? (<Image width={150} height={150} className="object-fit" src={profile.picture} alt="userImage"/>) 
                             : (<Image className="object-fit" src={User} alt="user"/>) }
                     </Link>
                     <div className="flex flex-col">
-                        <p className="font-bold text-secondary">{profile?.fullName}</p>
+                        <p className="font-bold text-secondary">{profile?.fullName || "-"}</p>
                         <p className="font-semibold text-secondary">{profile?.email}</p>
                     </div>
                 </div>}
@@ -67,17 +68,8 @@ function Header({token}) {
                     <label tabIndex={0}>
                         <HiOutlineViewList size={30} className="text-secondary" />
                     </label>
-                    <ul tabIndex={0} className="dropdown-content menu p-2 shadow rounded-box w-52 bg-white mt-5">
-                        <li className="h-12 text-primary hover:font-semibold">
-                            <Link href="/auth/login" className="h-full flex items-center justify-start text-primary">
-                                Login
-                            </Link>
-                        </li>
-                        <li className="h-12 text-primary hover:font-semibold">
-                            <Link href="/auth/register" className="h-full flex items-center justify-start text-primary">
-                                Sign Up
-                            </Link>
-                        </li>
+                    <ul tabIndex={0} className="dropdown-content menu p-2 shadow rounded-box w-72 bg-white mt-5">
+                        <MenuBar token={token}/>
                     </ul>
                 </div>
             </div>

@@ -69,7 +69,7 @@ const ProductDetails = ({token}) => {
             <title>Detail Product | MugLife</title>
 
             {/* Navbar */}
-            <Navbar></Navbar>
+            <Navbar token={token}></Navbar>
 
             {showModal && (
                 <dialog id="my_modal_1" className="modal bg-white bg-opacity-60" open>
