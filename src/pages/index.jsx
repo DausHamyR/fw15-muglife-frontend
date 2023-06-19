@@ -22,6 +22,7 @@ import Link from "next/link";
 
 import { withIronSessionSsr } from "iron-session/next";
 import cookieConfig from "@/helpers/cookieConfig";
+import { useSelector } from "react-redux";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
@@ -37,6 +38,9 @@ export const getServerSideProps = withIronSessionSsr(
 );
 
 const Landing = ({token}) => {
+    const profile = useSelector(state=>state.profile.data)
+    const role = profile.role
+
     return (
         <div>
             <title>Welcome to MugLife</title>

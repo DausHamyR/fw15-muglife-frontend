@@ -2,15 +2,17 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Select, Option } from '@material-tailwind/react'
-import drink from "../../assets/drink.png"
-import Footer from '../../components/Footer'
-import Navbar from '../../components/Header'
+import drink from "@/assets/drink.png"
+import Footer from '@/components/Footer'
+import Navbar from '@/components/Header'
 import { BiTrash } from "react-icons/bi";
-import ModalDelete from '../../components/modal-delete';
+import ModalDelete from '@/components/modal-delete';
 
 import cookieConfig from '@/helpers/cookieConfig';
 import { withIronSessionSsr } from "iron-session/next";
 import checkCredentials from "@/helpers/checkCredentials";
+import http from '@/helpers/http.helper'
+import { useRouter } from 'next/router'
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
@@ -25,6 +27,27 @@ export const getServerSideProps = withIronSessionSsr(
 }, cookieConfig);
 
 const EditProduct = ({token}) => {
+    const {query: {id}} = useRouter()
+    const [product, setProduct] = React.useState({})
+    const [variant, setVariant] = React.useState([])
+
+    const getProduct = React.useCallback(async()=>{
+        try {
+            const {data} = await http().get("/products/"+id)
+            if(data.results){
+                setProduct(data.results)
+                setVariant(data.results.variant)
+            }
+        } catch (error) {
+            const message = error?.response?.data?.message
+            return console.log(message)
+        }
+    },[])
+
+    React.useEffect(()=>{
+        getProduct()
+    },[getProduct])
+
     let [count, setCount] = React.useState(1);
     let increment = () => {
         if (count === 20) {
@@ -55,7 +78,7 @@ const EditProduct = ({token}) => {
                     <div className='ml-[5%]'>
                         <div className='flex gap-0.5'>
                             <div className='text-[#9c9674]'>Favorite & Promo {'>'}</div>
-                            <div className='text-[#9c9674]'>Cold Brew {'>'}</div>
+                            <div className='text-[#9c9674]'>{product.name} {'>'}</div>
                             <div className='text-[#3C2A21] font-semibold'>Edit Product</div>
                         </div>
 
@@ -82,10 +105,10 @@ const EditProduct = ({token}) => {
                     </div>
 
 
-                    <div className='ml-[10%] pt-[80px]'>
+                    <form className='ml-[10%] pt-[80px]'>
                         <div className=''>
                             <div className='pb-5'>
-                                <h1 className='text-5xl text-[#3C2A21] font-[800]'>COLD BREW</h1>
+                                <h1 className='text-5xl text-[#3C2A21] font-[800]'>{product.name}</h1>
                             </div>
 
                             <hr className='w-[500px] bg-[#3C2A21] h-0.5' />
@@ -139,7 +162,7 @@ const EditProduct = ({token}) => {
                             </div>
                             <div className='w-[358px]'>
                                 <Link href="#">
-                                    <button className="btn h-[83px] bg-[#3C2A21] hover:bg-[#5f463a] text-[#D5CEA3] text-2xl font-bold">
+                                    <button className="btn normal-case h-[83px] bg-[#3C2A21] hover:bg-[#5f463a] text-[#D5CEA3] text-xl font-bold">
                                         Add to Cart
                                     </button>
                                 </Link>
@@ -147,10 +170,10 @@ const EditProduct = ({token}) => {
                         </div>
                         <button 
                         onClick={save}
-                        className="save btn h-[83px] bg-[#3C2A21] hover:bg-[#5f463a] text-[#D5CEA3] text-2xl font-bold mt-5">
+                        className="save btn h-[83px] normal-case bg-[#3C2A21] hover:bg-[#5f463a] text-[#D5CEA3] text-xl font-bold mt-5">
                             Save change
                         </button>
-                    </div>
+                    </form>
                 </div>
             </main>
             <Footer></Footer>

@@ -41,9 +41,12 @@ function MenuBar({token}) {
             <Link href="/" className="text-base text-secondary hover:font-bold w-20 text-center">
                 Home
             </Link>
-            <Link href="/product" className="text-base text-secondary hover:font-bold w-20 text-center">
+            {profile.role === "superadmin" ? (<Link href="/admin/product" className="text-base text-secondary hover:font-bold w-20 text-center">
                 Product
-            </Link>
+            </Link>) : 
+            (<Link href="/product" className="text-base text-secondary hover:font-bold w-20 text-center">
+                Product
+            </Link>)}
             <Link href="/cart" className="text-base text-secondary hover:font-bold w-20 text-center">
                 Your Cart
             </Link>

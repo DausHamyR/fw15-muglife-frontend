@@ -2,14 +2,70 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import Image from 'next/image';
 import React from 'react';
-import food from '../../assets/foods.png';
+import food from '@/assets/foods.png';
 import { IoPencilSharp } from 'react-icons/io5';
+import ProductImage from '@/assets/ecommerce-default-product.png'
 
-function ProductAdmin() {
+import cookieConfig from '@/helpers/cookieConfig';
+import { withIronSessionSsr } from "iron-session/next";
+import { useRouter } from 'next/router';
+import checkCredentials from '@/helpers/checkCredentials';
+import http from '@/helpers/http.helper';
+import Link from 'next/link';
+
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req, res }) {
+    const token = req.session?.token;
+    checkCredentials(token, res, '/auth/login');
+    return {
+        props: {
+            token,
+        },
+    };
+}, cookieConfig);
+
+
+function ProductAdmin({token}) {
+    const [products, setProducts] = React.useState([])
+    const [category, setCategory] = React.useState([])
+    const [inCategory, setInCategory] = React.useState("")
+    const router = useRouter()
+
+    const getProduct = React.useCallback(async(category="", limit=50)=>{
+        try {
+            const {data} = await http().get("/products", {params: {category, limit}})
+            setProducts(data.results)
+            console.log(data)
+        } catch (error) {
+            const message = error?.response?.data?.message
+            return console.log(message)
+        }
+    }, [])
+
+    const getCategory = React.useCallback(async()=>{
+        try {
+            const {data} = await http().get("/categories")
+            setCategory(data.results)
+            console.log(data)
+        } catch (error) {
+            const message = error?.response?.data?.message
+            return console.log(message)
+        }
+    },[])
+
+    const doDetailProduct = (id)=>{
+        router.replace("/admin/product/"+id)
+    }
+
+    React.useEffect(()=>{
+        getProduct(inCategory)
+        getCategory()
+    },[getProduct, getCategory, inCategory])
+
     return (
         <>
             <title>Product | MugLife</title>
-            <Header />
+            <Header token={token} />
             <main className="pt-28">
                 <div className="flex flex-col-reverse md:flex-row items-start w-full">
                     <div className="w-full lg:w-[27%] min-w-[320px] flex flex-col items-center justify-start h-full gap-9 border-r pt-11">
@@ -54,15 +110,16 @@ function ProductAdmin() {
                                 <div className="flex justify-center items-center">
                                     <button className="text-secondary text-lg font-semibold h-full border-b-2 border-secondary w-40">Fafourite Product</button>
                                 </div>
-                                <div className="flex justify-center items-center">
-                                    <button className="text-secondary text-lg h-full w-24">Coffee</button>
-                                </div>
-                                <div className="flex justify-center items-center">
-                                    <button className="text-secondary text-lg h-full w-24">Non Coffee</button>
-                                </div>
-                                <div className="flex justify-center items-center">
-                                    <button className="text-secondary text-lg h-full w-24">Foods</button>
-                                </div>
+                                {category.map(items =>{
+                                    return(
+                                        <div 
+                                            key={`category-${items.id}`} 
+                                            className={`flex justify-center items-center text-secondary hover:text-accent ${items.name === inCategory && "border-b-2 border-secondary font-semibold "}`}
+                                        >
+                                            <button onClick={()=>setInCategory(items.name)} className="text-lg h-full w-24">{items.name}</button>
+                                        </div>
+                                    )
+                                })}
                                 <div className="flex justify-center items-center">
                                     <button className="text-secondary text-lg h-full w-24">Add-on</button>
                                 </div>
@@ -70,7 +127,23 @@ function ProductAdmin() {
                         </div>
 
                         <div className="flex flex-wrap gap-9 items-center justify-center pt-16 h-screen overflow-scroll scrollbar-hide mb-5 px-11 xl:px-24">
-                            <div className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
+                            {products.map(items =>{
+                                return(
+                                    <label key={`product${items.id}`} className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
+                                        <button onClick={()=>doDetailProduct(items.id)} className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
+                                            {items.picture ? (<Image width={128} height={128} src={items.picture} alt="Product-Image"/>) 
+                                            : (<Image src={ProductImage} alt="Product-Image"/>) }
+                                        </button>
+                                        <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">{items.name}</div>
+                                        <div className="text-lg text-secondary font-semibold">{`Rp${Number(items?.variant[0].price).toLocaleString("id")}`}</div>
+
+                                        <Link href={`/admin/product/edit-product/${items.id}`} className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
+                                            <IoPencilSharp size={13} className="text-white" />
+                                        </Link>
+                                    </label>
+                                )
+                            })}
+                            {/* <div className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
                                 <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
                                     <Image src={food} width={128} alt="" />
                                 </div>
@@ -185,7 +258,7 @@ function ProductAdmin() {
                                 </div>
                                 <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">Veggie tomato mix</div>
                                 <div className="text-lg text-secondary font-semibold">IDR 34.000</div>
-                            </div>
+                            </div> */}
                         </div>
                         <div className="w-full text-center px-11 xl:px-24 py-11">
                             <button className="btn btn-secondary w-full capitalize text-white">Add new product</button>
