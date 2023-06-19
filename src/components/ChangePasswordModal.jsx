@@ -1,24 +1,9 @@
-import cookieConfig from '@/helpers/cookieConfig';
 import http from '@/helpers/http.helper';
-import { withIronSessionSsr } from 'iron-session/next';
 import React from 'react';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 
-export const getServerSideProps = withIronSessionSsr(
-    async function getServerSideProps({ req, res }) {
-        const token = req.session?.token
-        checkCredentials(token, res, '/auth/login')
-        return {
-            props: {
-                token
-            },
-        };
-    },
-    cookieConfig
-);
-
-const ChangePasswordModal = ({ visibleModal, token }) => {
-    const [closeModal, setCloseModal] = React.useState(visibleModal);
+const ChangePasswordModal = ({ token }) => {
+    const [closeModal, setCloseModal] = React.useState(true);
     const close = () => {
         setCloseModal(false);
     };
@@ -61,6 +46,10 @@ const ChangePasswordModal = ({ visibleModal, token }) => {
                 setErrorMessage('Old password is incorrect.')
                 setLoading(false)
             }
+            if(message){
+                setErrorMessage(message)
+                setLoading(false)
+            }
             setSuccessMessage('')
         }finally{
             setLoading(false)
@@ -84,7 +73,7 @@ const ChangePasswordModal = ({ visibleModal, token }) => {
     return (
         <>
             <form onSubmit={doChangePassword}>
-                <input type="checkbox" id="loading" className="modal-toggle" checked={closeModal} />
+                <input type="checkbox" id="loading" className="modal-toggle" checked={closeModal} readOnly />
                 <div className="modal">
                     <div className="modal-box bg-white">
                         <div className="py-1 text-black text-lg font-semibold">Change Password</div>
