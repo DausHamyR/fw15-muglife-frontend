@@ -228,7 +228,8 @@ function Profile({ token }) {
                                                             <input onChange={handleChange} onBlur={handleBlur} type="radio" name="gender" id="genChoiceFem" value="1" />
                                                             <label htmlFor="genChoiceFem">
                                                                 Female
-                                                        </label>
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
