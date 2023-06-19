@@ -8,11 +8,27 @@ import profile3 from "../../assets/image 49.svg";
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Header";
 
-const AdminChat = () => {
+import cookieConfig from '@/helpers/cookieConfig';
+import { withIronSessionSsr } from "iron-session/next";
+import checkCredentials from "@/helpers/checkCredentials";
+
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req, res }) {
+    const token = req.session?.token;
+    checkCredentials(token, res, '/auth/login');
+
+    return {
+        props: {
+            token,
+        },
+    };
+}, cookieConfig);
+
+const AdminChat = ({token}) => {
     return (
         <>
             <title>Chat | MugLife</title>
-            <Navbar />
+            <Navbar token={token}/>
             <div className="font-poppins pt-[100px]">
                 <div className="lg:bg-[url('../assets/background-chat.png')] bg-cover bg-no-repeat pb-[89px]">
                     <div className="lg:pt-[84px] lg:px-[200px] lg:flex ">

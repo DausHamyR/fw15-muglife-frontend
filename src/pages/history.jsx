@@ -5,11 +5,27 @@ import Footer from "../components/Footer";
 import tomato from "../assets/tomato.png";
 import { Edit2, Trash2 } from "react-feather";
 
-const History = () => {
+import cookieConfig from '@/helpers/cookieConfig';
+import { withIronSessionSsr } from "iron-session/next";
+import checkCredentials from "@/helpers/checkCredentials";
+
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req, res }) {
+    const token = req.session?.token;
+    checkCredentials(token, res, '/auth/login');
+
+    return {
+        props: {
+            token,
+        },
+    };
+}, cookieConfig);
+
+const History = ({token}) => {
     return (
         <>
             <title>History | MugLife</title>
-            <Navbar />
+            <Navbar token={token} />
             <div className="max-w-full max-h-full pt-[80px]">
                 <div className='bg-history_bg bg-no-repeat bg-cover pb-[100px]'>
                     <div className='flex flex-col justify-center items-center leading-10 pt-[100px]'>
