@@ -10,7 +10,7 @@ export const getServerSideProps = withIronSessionSsr(
         checkCredentials(token, res, '/auth/login')
         return {
             props: {
-                token,
+                token
             },
         };
     },
