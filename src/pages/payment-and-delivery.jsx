@@ -7,13 +7,29 @@ import Image from 'next/image';
 import { AiFillCreditCard, AiTwotoneBank } from 'react-icons/ai';
 import { MdDeliveryDining } from 'react-icons/md';
 
-function PaymmentAndDelivery() {
+import cookieConfig from '@/helpers/cookieConfig';
+import { withIronSessionSsr } from "iron-session/next";
+import checkCredentials from "@/helpers/checkCredentials";
+
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req, res }) {
+    const token = req.session?.token;
+    checkCredentials(token, res, '/auth/login');
+
+    return {
+        props: {
+            token,
+        },
+    };
+}, cookieConfig);
+
+function PaymmentAndDelivery({token}) {
     return (
         <>
             <Head>
                 <title>Payment & Delivery | MugLife</title>
             </Head>
-            <Header />
+            <Header token={token} />
             <main className="pt-28">
                 <div className="w-full bg-payment-pattern bg-no-repeat bg-cover py-11 px-7 lg:px-36 xl:px-64">
                     <div className="w-full mb-11">

@@ -7,7 +7,22 @@ import food from '../../../public/foods.png';
 import http from '@/helpers/http.helper';
 import { useRouter } from 'next/router';
 
-function Product() {
+import cookieConfig from '@/helpers/cookieConfig';
+import { withIronSessionSsr } from "iron-session/next";
+
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req, res }) {
+        const token = req.session?.token || null;
+        return {
+            props: {
+                token,
+            },
+        };
+    },
+    cookieConfig
+);
+
+function Product({token}) {
     const [products, setProducts] = React.useState([])
     const [category, setCategory] = React.useState([])
     const [inCategory, setInCategory] = React.useState("")
@@ -47,7 +62,7 @@ function Product() {
         <>
             <title>Product | MugLife</title>
             
-            <Header />
+            <Header token={token} />
             <main className="pt-28">
                 <div className="flex flex-col-reverse md:flex-row items-start w-full">
                     <div className="w-full lg:w-[27%] min-w-[320px] flex flex-col items-center justify-start h-full gap-9 border-r pt-11">
