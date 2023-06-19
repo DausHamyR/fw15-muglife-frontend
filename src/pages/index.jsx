@@ -40,7 +40,7 @@ export const getServerSideProps = withIronSessionSsr(
 const Landing = ({token}) => {
     const profile = useSelector(state=>state.profile.data)
     const role = profile.role
-    console.log(role)
+
     return (
         <div>
             <title>Welcome to MugLife</title>
