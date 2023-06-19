@@ -8,18 +8,16 @@ export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
         const token = req.session?.token
         checkCredentials(token, res, '/auth/login')
-        const {data} = await http(token).get('/profile')
         return {
             props: {
                 token,
-                user: data.results,
             },
         };
     },
     cookieConfig
 );
 
-const ChangePasswordModal = ({ visibleModal, token, user }) => {
+const ChangePasswordModal = ({ visibleModal, token }) => {
     const [closeModal, setCloseModal] = React.useState(visibleModal);
     const close = () => {
         setCloseModal(false);
@@ -41,8 +39,10 @@ const ChangePasswordModal = ({ visibleModal, token, user }) => {
                 setLoading(false)
                 return
             }
-            const body = new URLSearchParams({oldPassword, newPassword, confirmNewPassword}).toString()
+            const body = new URLSearchParams({oldPassword, newPassword, confirmNewPassword})
+            console.log(body)
             const {data} = await http(token).patch('/changePassword', body)
+            console.log(data)
             if(data){
                 setSuccessMessage("Successfully changed password")
                 setLoading(false)
@@ -83,7 +83,7 @@ const ChangePasswordModal = ({ visibleModal, token, user }) => {
     
     return (
         <>
-            <div>
+            <form onSubmit={doChangePassword}>
                 <input type="checkbox" id="loading" className="modal-toggle" checked={closeModal} />
                 <div className="modal">
                     <div className="modal-box bg-white">
@@ -97,10 +97,10 @@ const ChangePasswordModal = ({ visibleModal, token, user }) => {
                         (<div className='flex justify-center'>
                             <h1 className="alert alert-success w-[400px] mt-4">{successMessage}</h1>
                         </div>)}
-                        <form onSubmit={doChangePassword} className="modal-action flex flex-col items-center justify-center gap-7 w-full">
+                        <div className="modal-action flex flex-col items-center justify-center gap-7 w-full">
                             <div className="w-full">
                                 <div className="text-base text-primary pb-2">Old Password</div>
-                                <div className='flex items-center'>
+                                <label className='flex items-center'>
                                     <input name='oldPassword' type={showPassword ? 'text' : 'password'} className="input input-primary w-full" />
                                     <div onClick={handleTogglePassword} className='relative right-12'>
                                         {showPassword ? 
@@ -108,11 +108,11 @@ const ChangePasswordModal = ({ visibleModal, token, user }) => {
                                             <AiOutlineEyeInvisible size={25}/> 
                                         }
                                     </div>
-                                </div>
+                                </label>
                             </div>
                             <div className="w-full">
                                 <div className="text-base text-primary pb-2">New Password</div>
-                                <div className='flex items-center'>
+                                <label className='flex items-center'>
                                     <input name='newPassword' type={showPassword2 ? 'text' : 'password'} className="input input-primary w-full" />
                                     <div onClick={handleTogglePassword2} className='relative right-12'>
                                         {showPassword2 ? 
@@ -120,11 +120,11 @@ const ChangePasswordModal = ({ visibleModal, token, user }) => {
                                             <AiOutlineEyeInvisible size={25}/> 
                                         }
                                     </div>
-                                </div>
+                                </label>
                             </div>
                             <div className="w-full">
                                 <div className="text-base text-primary pb-2">Confirm Password</div>
-                                <div className='flex items-center'>
+                                <label className='flex items-center'>
                                     <input name='confirmNewPassword' type={showPassword3 ? 'text' : 'password'} className="input input-primary w-full" />
                                     <div onClick={handleTogglePassword3} className='relative right-12'>
                                         {showPassword3 ? 
@@ -132,7 +132,7 @@ const ChangePasswordModal = ({ visibleModal, token, user }) => {
                                             <AiOutlineEyeInvisible size={25}/> 
                                         }
                                     </div>
-                                </div>
+                                </label>
                             </div>
                             <div className="w-full flex items-center justify-end gap-5">
                                 <button
@@ -144,12 +144,12 @@ const ChangePasswordModal = ({ visibleModal, token, user }) => {
                                 >
                                     Cancel
                                 </button>
-                                <button disabled={loading} className="btn btn-accent w-40 capitalize text-black ">Change Password</button>
+                                <button type='submit' disabled={loading} className="btn btn-accent w-40 capitalize text-black ">Change Password</button>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
         </>
     );
 };
