@@ -39,13 +39,26 @@ const VARIANT = [
 
 function NewProduct() {
     const router = useRouter();
+    const [newVariant, setNewVariant] = React.useState([]);
+    const [btnR, setBtnR] = React.useState('bg-info');
+    const [btnL, setBtnL] = React.useState('bg-info');
+    const [btnXL, setBtnXL] = React.useState('bg-info');
+    const [btnRG, setBtnRG] = React.useState('bg-info');
+    const [btnLG, setBtnLG] = React.useState('bg-info');
+    const [btnXLG, setBtnXLG] = React.useState('bg-info');
     const [btnHD, setBtnHD] = React.useState('btn-info');
     const [btnDI, setBtnDI] = React.useState('btn-info');
     const [btnTA, setBtnTA] = React.useState('btn-info');
     const [category, setCategory] = React.useState([]);
     const [selectedPicture, setSelectedPicture] = React.useState(false);
     const [pictureURI, setPictureURI] = React.useState('');
+    const [basePrice, setBasePrice] = React.useState('');
+    const [errBasePrice, setErrBasePrice] = React.useState('');
+    const [quantityProduct, setQuantityProduct] = React.useState('');
+    const [errQuantityProduct, setErrQuantityProduct] = React.useState('');
+    const [errVariant, setErrVariant] = React.useState('');
     const [errPicture, setErrPicture] = React.useState('');
+
     const [openModal, setOpenModoal] = React.useState(false);
 
     React.useEffect(() => {
@@ -61,6 +74,14 @@ function NewProduct() {
         getDataCategory();
     }, []);
 
+    const handleInputPrice = (e) => {
+        setBasePrice(e.target.value);
+    };
+    const handleInputQuntity = (e) => {
+        setQuantityProduct(e.target.value);
+    };
+    // console.log(newVariant);
+
     const handleDelivery = (deliver) => {
         if (deliver === 'homeDelivery') {
             setBtnHD('btn-accent');
@@ -74,6 +95,85 @@ function NewProduct() {
             setBtnHD('btn-info');
             setBtnDI('btn-info');
             setBtnTA('btn-accent');
+        }
+    };
+
+    console.log(newVariant);
+
+    const handleVariantSize = (size) => {
+        const variant = {};
+        if (size === 'R') {
+            if (btnR === 'bg-info') {
+                setBtnR('bg-accent');
+            } else {
+                setBtnR('bg-info');
+            }
+            variant.code = 'R';
+            variant.name = 'Regular';
+            variant.price = parseInt(basePrice);
+            variant.quantity = parseInt(quantityProduct);
+        } else if (size === 'L') {
+            if (btnL === 'bg-info') {
+                setBtnL('bg-accent');
+            } else {
+                setBtnL('bg-info');
+            }
+            const prizeL = parseInt(basePrice) + 5000;
+            variant.code = 'L';
+            variant.name = 'Large';
+            variant.price = prizeL;
+            variant.quantity = parseInt(quantityProduct);
+        } else if (size === 'XL') {
+            if (btnXL === 'bg-info') {
+                setBtnXL('bg-accent');
+            } else {
+                setBtnXL('bg-info');
+            }
+            const prizeXL = parseInt(basePrice) + 10000;
+            variant.code = 'XL';
+            variant.name = 'Extra Large';
+            variant.price = prizeXL;
+            variant.quantity = parseInt(quantityProduct);
+        } else if (size === 'RG') {
+            if (btnRG === 'bg-info') {
+                setBtnRG('bg-accent');
+            } else {
+                setBtnRG('bg-info');
+            }
+            variant.code = '250GR';
+            variant.name = '250 GR - Regular';
+            variant.price = basePrice;
+            variant.quantity = parseInt(quantityProduct);
+        } else if (size === 'LG') {
+            if (btnLG === 'bg-info') {
+                setBtnLG('bg-accent');
+            } else {
+                setBtnLG('bg-info');
+            }
+            const prizeLG = parseInt(basePrice) + 5000;
+            variant.code = '300GR';
+            variant.name = '300 GR - Large';
+            variant.price = prizeLG;
+            variant.quantity = parseInt(quantityProduct);
+        } else if (size === 'XLG') {
+            if (btnXLG === 'bg-info') {
+                setBtnXLG('bg-accent');
+            } else {
+                setBtnXLG('bg-info');
+            }
+            const prizeXLG = parseInt(basePrice) + 10000;
+            variant.code = '500GR';
+            variant.name = '500 GR - Extra Large';
+            variant.price = prizeXLG;
+            variant.quantity = parseInt(quantityProduct);
+        }
+
+        const variantIndex = newVariant.findIndex((item) => item.code === variant.code);
+
+        if (variantIndex === -1) {
+            setNewVariant((prevVariants) => [...prevVariants, variant]);
+        } else {
+            setNewVariant((prevVariants) => prevVariants.filter((item, index) => index !== variantIndex));
         }
     };
 
@@ -103,13 +203,6 @@ function NewProduct() {
 
     const createNewProduct = async (values) => {
         setOpenModoal(true);
-        if (selectedPicture === false) {
-            setOpenModoal(false);
-            setErrPicture('Please select product picture');
-            return;
-        } else {
-            setErrPicture('');
-        }
         values.variant = VARIANT.filter((item) => values.variant.includes(item.code));
         values.variant.forEach((item, index) => {
             values.variant[index].quantity = parseInt(values.quantity);
@@ -151,6 +244,74 @@ function NewProduct() {
         });
         router.push('/admin/product');
         setOpenModoal(false);
+        return;
+        if (basePrice === '') {
+            setErrBasePrice('Price is required');
+            if (quantityProduct === '') {
+                setErrQuantityProduct('Stock is required');
+            }
+            if (newVariant.length <= 0) {
+                setErrVariant('Please select the variant size');
+            }
+            if (selectedPicture === false) {
+                setErrPicture('Please select product picture');
+            }
+        }
+
+        const form = new FormData();
+        Object.keys(values).forEach((key) => {
+            if (values[key]) {
+                form.append(key, values[key]);
+            }
+        });
+
+        if (selectedPicture) {
+            form.append('picture', selectedPicture);
+        }
+
+        if (newVariant.length > 0) {
+            form.append('variant', JSON.stringify(newVariant));
+        }
+
+        if (selectedPicture === false) {
+            setOpenModoal(false);
+            setErrPicture('Please select product picture');
+            return;
+        } else {
+            setErrPicture('');
+        }
+        if (basePrice === '') {
+            setOpenModoal(false);
+            setErrBasePrice('Price is required');
+            return;
+        } else {
+            setErrBasePrice('');
+        }
+
+        if (quantityProduct === '') {
+            setOpenModoal(false);
+            setErrQuantityProduct('Stock is required');
+            return;
+        } else {
+            setErrQuantityProduct('');
+        }
+
+        if (newVariant.length <= 0) {
+            setOpenModoal(false);
+            setErrVariant('Please select the variant size');
+            return;
+        } else {
+            setErrVariant('');
+        }
+
+        const { data } = await http().post('/products/admin', form, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        router.push('/admin/product');
+        setOpenModoal(false);
+        console.log(data);
     };
 
     return (
@@ -213,6 +374,7 @@ function NewProduct() {
                                         <div className="text-xl text-primary font-semibold">Input category</div>
                                         <div className="w-full">
                                             <select name="product_category_id" className="select w-full input input-accent text-black" onChange={handleChange} onBlur={handleBlur} value={values.product_category_id}>
+                                                {/* <option disabled selected>Article Category</option> */}
                                                 {category.map((item) => {
                                                     return (
                                                         <React.Fragment key={`category-${item.id}`}>
@@ -229,12 +391,33 @@ function NewProduct() {
                                             </label>
                                         )}
                                     </div>
+
+                                    {/* <div className="w-full md:max-w-[400px] flex flex-col items-start justify-start gap-5">
+                                        <div className="text-xl text-primary font-semibold">Delivery Hour :</div>
+                                        <div className="w-full">
+                                            <div className="text-sm">Input start hour</div>
+                                            <input type="time" name="startDelivery" onChange={handleChange} onBlur={handleBlur} value={values.startDelivery} className="w-full input input-accent" placeholder="Input start hour" />
+                                        </div>
+                                        <div className="w-full">
+                                            <div className="text-sm">Input end hour</div>
+                                            <input type="time" name="endDelivery" onChange={handleChange} onBlur={handleBlur} value={values.endDelivery} className="w-full input input-accent" placeholder="Input end hour" />
+                                        </div>
+                                    </div> */}
                                     <div className="w-full md:max-w-[400px] flex flex-col items-start justify-start gap-5">
                                         <div className="text-xl text-primary font-semibold">Input stock</div>
-
+                                        {/* <div className="w-full">
+                                            <input type="text" name="quantity" onChange={handleInputQuntity} onBlur={handleBlur} value={quantityProduct} className="w-full input input-accent" placeholder="Input Stock" />
+                                        </div> */}
                                         <div className="w-full">
                                             <input type="text" name="quantity" onChange={handleChange} onBlur={handleBlur} value={values.quantity} className="w-full input input-accent" placeholder="Input Stock" />
                                         </div>
+                                        {/* {errQuantityProduct === 'Stock is required' ? (
+                                            <label className="label">
+                                                <span className="label-text-alt text-error">{errQuantityProduct}</span>
+                                            </label>
+                                        ) : (
+                                            ''
+                                        )} */}
                                         {errors.quantity && touched.quantity && (
                                             <label className="label">
                                                 <span className="label-text-alt text-error">{errors.quantity}</span>
@@ -282,6 +465,13 @@ function NewProduct() {
                                                     <span className="label-text-alt text-error">{errors.price}</span>
                                                 </label>
                                             )}
+                                            {/* {errBasePrice === 'Price is required' ? (
+                                                <label className="label">
+                                                    <span className="label-text-alt text-error">{errBasePrice}</span>
+                                                </label>
+                                            ) : (
+                                                ''
+                                            )} */}
                                         </div>
                                         <div className="w-full flex flex-col items-start gap-2 ">
                                             <div className="w-full text-primary text-lg font-semibold">Description :</div>
@@ -327,7 +517,56 @@ function NewProduct() {
                                                         <span className="label-text-alt text-error">{errors.variant}</span>
                                                     </label>
                                                 )}
+                                                {/* <button
+                                                    type="button"
+                                                    onClick={() => handleVariantSize('R')}
+                                                    className={`${btnR} w-14 lg:w-[70px] h-14 lg:h-[70px] text-primary text-xl lg:text-3xl font-semibold rounded-full flex items-center justify-center`}
+                                                >
+                                                    R
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleVariantSize('L')}
+                                                    className={`${btnL} w-14 lg:w-[70px] h-14 lg:h-[70px]  text-primary text-xl lg:text-3xl font-semibold rounded-full flex items-center justify-center`}
+                                                >
+                                                    L
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleVariantSize('XL')}
+                                                    className={`${btnXL} w-14 lg:w-[70px] h-14 lg:h-[70px]  text-primary text-xl lg:text-3xl font-semibold rounded-full flex items-center justify-center`}
+                                                >
+                                                    XL
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleVariantSize('RG')}
+                                                    className={`${btnRG} w-14 lg:w-[70px] h-14 lg:h-[70px]  text-primary text-base lg:text-xl text-center px-1 font-semibold rounded-full flex items-center justify-center`}
+                                                >
+                                                    250 gr
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleVariantSize('LG')}
+                                                    className={`${btnLG} w-14 lg:w-[70px] h-14 lg:h-[70px]  text-primary text-base lg:text-xl text-center px-1 font-semibold rounded-full flex items-center justify-center`}
+                                                >
+                                                    300 gr
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleVariantSize('XLG')}
+                                                    className={`${btnXLG} w-14 lg:w-[70px] h-14 lg:h-[70px]  text-primary text-base lg:text-xl text-center px-1 font-semibold rounded-full flex items-center justify-center`}
+                                                >
+                                                    500 gr
+                                                </button> */}
                                             </div>
+                                            {errVariant === 'Please select the variant size' ? (
+                                                <label className="label">
+                                                    <span className="label-text-alt text-error">{errVariant}</span>
+                                                </label>
+                                            ) : (
+                                                ''
+                                            )}
                                         </div>
 
                                         <div className="w-full flex flex-col items-start gap-2 ">
@@ -372,6 +611,15 @@ function NewProduct() {
                         )}
                     </Formik>
                 </div>
+                {/* <button onClick={handleButtonClick('R')} className="w-14 lg:w-[70px] h-14 lg:h-[70px] bg-accent text-primary text-xl lg:text-3xl font-semibold rounded-full flex items-center justify-center">
+                    R
+                </button> */}
+                {/* <button onClick={handleButtonClick('L')} className="w-14 lg:w-[70px] h-14 lg:h-[70px] bg-accent text-primary text-xl lg:text-3xl font-semibold rounded-full flex items-center justify-center">
+                    L
+                </button>
+                <button onClick={handleButtonClick('XL')} className="w-14 lg:w-[70px] h-14 lg:h-[70px] bg-accent text-primary text-xl lg:text-3xl font-semibold rounded-full flex items-center justify-center">
+                    XL
+                </button> */}
             </main>
             <Footer />
             <div>
