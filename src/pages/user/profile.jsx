@@ -16,6 +16,7 @@ import { Formik, Field } from 'formik';
 import ChangePasswordModal from '@/components/ChangePasswordModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { setProfile } from '@/redux/reducers/profile';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 export const getServerSideProps = withIronSessionSsr(async function getServerSideProps({ req, res }) {
     const token = req.session?.token;
@@ -51,6 +52,7 @@ function Profile({ token }) {
     const [editContacts, setEditContacts] = React.useState(false);
     const [editDetails, setEditDetails] = React.useState(false);
     const [modalOpen, setModalOpen] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
     const [pictureURI, setPictureURI] = React.useState("");
     const [selectedPicture, setSelectedPicture] = React.useState({});
 
@@ -76,6 +78,7 @@ function Profile({ token }) {
     };
 
     const doEditPicture = async (values) => {
+        setLoading(true)
         let fullName;
         if(values.lastName === ""){
             fullName = values.firstName;
@@ -105,6 +108,7 @@ function Profile({ token }) {
             setPictureURI("");
             setEditContacts(false)
             setEditDetails(false)
+            setLoading(false)
         }
     };
 
@@ -372,6 +376,14 @@ function Profile({ token }) {
             </main>
             <Footer />
             {modalOpen && <ChangePasswordModal token={token} />}
+            <input type="checkbox" id="loading" className="modal-toggle" checked={loading}/>
+            <div className="modal">
+                <div className="modal-box bg-transparent shadow-none">
+                    <div className='flex justify-center'>
+                        <AiOutlineLoading3Quarters className='animate-spin' color='white' size={80}/>
+                    </div>
+                </div>
+            </div>
         </>
     );
 }
