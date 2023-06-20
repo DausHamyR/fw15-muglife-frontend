@@ -12,12 +12,12 @@ import { setProfile } from '@/redux/reducers/profile';
 import User from '@/assets/user.png'
 import MenuBar from './MenuBar';
 import { useRouter } from 'next/router';
+import axios from 'axios';
 
 function Header({token}) {
     const profile = useSelector(state => state.profile.data);
     const dispatch = useDispatch()
     const router = useRouter()
-    const [search, setSearch] = React.useState('');
 
     const getProfile = React.useCallback(async()=>{
         try {
