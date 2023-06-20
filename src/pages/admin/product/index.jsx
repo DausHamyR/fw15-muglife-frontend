@@ -47,7 +47,6 @@ function ProductAdmin({token}) {
     const getProduct = React.useCallback(async(search="", category="", limit=50)=>{
         try {
             const {data} = await http().get("/products", {params: {
-                sortBy,
                 search,
                 category, 
                 limit}})
@@ -58,11 +57,6 @@ function ProductAdmin({token}) {
             return console.log(message)
         }
     }, [])
-
-    React.useEffect(()=>{
-        getProduct(search);
-
-    }, [search]);
 
     const getCategory = React.useCallback(async()=>{
         try {
@@ -80,9 +74,9 @@ function ProductAdmin({token}) {
     }
 
     React.useEffect(()=>{
-        getProduct(inCategory)
+        getProduct(search,inCategory)
         getCategory()
-    },[getProduct, getCategory, inCategory])
+    },[getProduct, getCategory, inCategory, search])
 
     return (
         <>
