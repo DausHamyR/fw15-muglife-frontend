@@ -7,7 +7,7 @@ const http = (token) => {
     }
     const instance = axios.create({
         headers,
-        baseURL: 'https://filthy-red-hatchling.cyclic.app'
+        baseURL: process.env.NEXT_PUBLIC_BACKEND_URL
     })
     instance.interceptors.response.use((response)=> {
         return response
