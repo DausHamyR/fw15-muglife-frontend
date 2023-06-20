@@ -9,5 +9,4 @@ const checkCredentials = (token, res, redirectTo)=> {
       };
     }
 }
-
 export default checkCredentials
