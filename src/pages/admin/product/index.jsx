@@ -5,6 +5,7 @@ import React from 'react';
 import food from '@/assets/foods.png';
 import { IoPencilSharp } from 'react-icons/io5';
 import ProductImage from '@/assets/ecommerce-default-product.png'
+import {LuSearch} from 'react-icons/lu'
 
 import cookieConfig from '@/helpers/cookieConfig';
 import { withIronSessionSsr } from "iron-session/next";
@@ -39,12 +40,17 @@ export const getServerSideProps = withIronSessionSsr(
 function ProductAdmin({token}) {
     const [products, setProducts] = React.useState([])
     const [category, setCategory] = React.useState([])
+    const [search, setSearch] = React.useState("")
     const [inCategory, setInCategory] = React.useState("")
     const router = useRouter()
 
-    const getProduct = React.useCallback(async(category="", limit=50)=>{
+    const getProduct = React.useCallback(async(search="", category="", limit=50)=>{
         try {
-            const {data} = await http().get("/products", {params: {category, limit}})
+            const {data} = await http().get("/products", {params: {
+                sortBy,
+                search,
+                category, 
+                limit}})
             setProducts(data.results)
             console.log(data)
         } catch (error) {
@@ -52,6 +58,11 @@ function ProductAdmin({token}) {
             return console.log(message)
         }
     }, [])
+
+    React.useEffect(()=>{
+        getProduct(search);
+
+    }, [search]);
 
     const getCategory = React.useCallback(async()=>{
         try {
@@ -116,6 +127,11 @@ function ProductAdmin({token}) {
                         </div>
                     </div>
                     <div className="overflow-hidden w-full lg:w-[73%] flex flex-col items-start justify-center h-full pt-11 ">
+                        <div className="flex flex-col w-72 gap-2 pb-4 relative">
+                            <label className="font-[500] text-primary text-xl">Search Products</label>
+                            <input onChange={(e)=> setSearch(e.target.value)} type="text" placeholder="Search" className="input text-primary w-full pl-16" />
+                            <LuSearch className="absolute top-11 left-5 text-primary" size={27}/>
+                        </div>
                         <div className="w-full flex justify-center items-center text-black px-2 mb-11">
                             <div className="px-11 xl:px-24 w-full flex items-center justify-between gap-5 overflow-scroll scrollbar-hide">
                                 <div className="flex justify-center items-center">
