@@ -11,6 +11,7 @@ import Navbar from "../../components/Header";
 import cookieConfig from '@/helpers/cookieConfig';
 import { withIronSessionSsr } from "iron-session/next";
 import checkCredentials from "@/helpers/checkCredentials";
+import http from "@/helpers/http.helper";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
@@ -34,11 +35,11 @@ export const getServerSideProps = withIronSessionSsr(
     };
 }, cookieConfig);
 
-const RoomChatAdmin = () => {
+const RoomChatAdmin = ({token}) => {
     return (
         <>
             <title>Room Chat | MugLife</title>
-            <Navbar />
+            <Navbar token={token} />
             <div className="pt-[100px] font-poppins">
                 <div className="lg:bg-[url('../assets/background-chat.png')] bg-cover bg-no-repeat pb-[89px]">
                     <div className="lg:pt-[84px] lg:px-[200px] lg:flex ">
