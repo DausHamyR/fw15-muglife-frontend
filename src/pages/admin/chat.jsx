@@ -17,6 +17,16 @@ export const getServerSideProps = withIronSessionSsr(
     const token = req.session?.token;
     checkCredentials(token, res, '/auth/login');
 
+    const {data} = await http(token).get("/profile")
+    if(data.results.role === "general"){
+        res.setHeader('location', "/chat")
+        res.statusCode = 302
+        res.end()
+        return {
+            props: {}
+        };
+    }
+
     return {
         props: {
             token,
