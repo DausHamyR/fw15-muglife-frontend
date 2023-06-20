@@ -101,10 +101,6 @@ function Header({token}) {
                                 </button>}
                             </ul>
                     </div>
-                    {/* <div className="flex flex-col">
-                        <p className="font-bold text-secondary">{profile?.fullName || "-"}</p>
-                        <p className="font-semibold text-secondary">{profile?.email}</p>
-                    </div> */}
                 </div>}
                 <div className="block lg:hidden dropdown dropdown-end z-10">
                     <label tabIndex={0}>
