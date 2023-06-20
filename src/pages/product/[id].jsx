@@ -10,6 +10,7 @@ import React from 'react';
 import Link from 'next/link';
 import http from '@/helpers/http.helper';
 import { useSelector } from 'react-redux';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 export const getServerSideProps = withIronSessionSsr(async function getServerSideProps({ req, res }) {
     const token = req.session?.token || null;
@@ -26,6 +27,8 @@ const ProductDetails = ({ token }) => {
     const {
         query: { id },
     } = useRouter();
+    const router = useRouter();
+
     const [showModal, setShowModal] = React.useState(false);
     const [product, setProduct] = React.useState({});
     const [delivery, setDelivery] = React.useState([]);
@@ -35,6 +38,7 @@ const ProductDetails = ({ token }) => {
     const [variantCode, setVariantCode] = React.useState('');
     const [errSelectVar, setErrSelectVar] = React.useState('');
     const [quantityItem, setQuntityItem] = React.useState(1);
+    const [openModal, setOpenModoal] = React.useState(false);
 
     // console.log(JSON.stringify(charts));
 
@@ -51,6 +55,7 @@ const ProductDetails = ({ token }) => {
     // const fixChart = JSON.stringify(charts);
 
     const processAddTransaction = async (fixChart) => {
+        setOpenModoal(true);
         const dataTransaction = {
             itemId: fixChart.map((item) => item.item_id.toString()),
             variant: fixChart.map((item) => item.variant),
@@ -71,6 +76,8 @@ const ProductDetails = ({ token }) => {
             });
 
             const { data } = await http(token).post('/transactions', params.toString());
+            router.push('/payment-and-delivery');
+            setOpenModoal(false);
         } else {
             const params = new URLSearchParams();
 
@@ -81,6 +88,8 @@ const ProductDetails = ({ token }) => {
             });
 
             const { data } = await http(token).post('/transactions', params.toString());
+            router.push('/payment-and-delivery');
+            setOpenModoal(false);
         }
     };
 
@@ -304,7 +313,17 @@ const ProductDetails = ({ token }) => {
                 </div>
             </div>
 
-            <Footer></Footer>
+            <Footer />
+            <div>
+                <input type="checkbox" id="loading" className="modal-toggle" checked={openModal} />
+                <div className="modal">
+                    <div className="modal-box bg-transparent h-40 shadow-none overflow-hidden">
+                        <div className="flex flex-col justify-center items-center">
+                            <AiOutlineLoading3Quarters className="animate-spin" size={70} color="white" />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </>
     );
 };

@@ -45,7 +45,7 @@ function Header({ token }) {
                             Product
                         </Link>
                     )}
-                    <Link href="/cart" className="text-base text-secondary hover:font-bold w-20 text-center">
+                    <Link href="/payment-and-delivery" className="text-base text-secondary hover:font-bold w-20 text-center">
                         Your Cart
                     </Link>
                     <Link href="/history" className="text-base text-secondary hover:font-bold w-20 text-center">
