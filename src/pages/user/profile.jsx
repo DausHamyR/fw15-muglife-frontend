@@ -357,7 +357,7 @@ function Profile({ token }) {
                                                 </button>
                                             </div>
                                             <div className="w-full flex flex-col items-center justify-center">
-                                                <Link href="/api/logout" className="w-full btn btn-neutral text-primary capitalize rounded-xl flex items-center justify-between">
+                                                <Link href="/auth/logout" className="w-full btn btn-neutral text-primary capitalize rounded-xl flex items-center justify-between">
                                                     Logout <IoIosArrowForward />
                                                 </Link>
                                             </div>
