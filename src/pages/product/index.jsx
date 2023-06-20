@@ -2,66 +2,63 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import Image from 'next/image';
 import React from 'react';
-import ProductImage from '@/assets/ecommerce-default-product.png'
+import ProductImage from '@/assets/ecommerce-default-product.png';
 import food from '../../../public/foods.png';
 import http from '@/helpers/http.helper';
 import { useRouter } from 'next/router';
 
 import cookieConfig from '@/helpers/cookieConfig';
-import { withIronSessionSsr } from "iron-session/next";
+import { withIronSessionSsr } from 'iron-session/next';
 
-export const getServerSideProps = withIronSessionSsr(
-    async function getServerSideProps({ req, res }) {
-        const token = req.session?.token || null;
-        return {
-            props: {
-                token,
-            },
-        };
-    },
-    cookieConfig
-);
+export const getServerSideProps = withIronSessionSsr(async function getServerSideProps({ req, res }) {
+    const token = req.session?.token || null;
+    return {
+        props: {
+            token,
+        },
+    };
+}, cookieConfig);
 
-function Product({token}) {
-    const [products, setProducts] = React.useState([])
-    const [category, setCategory] = React.useState([])
-    const [inCategory, setInCategory] = React.useState("")
-    const router = useRouter()
+function Product({ token }) {
+    const [products, setProducts] = React.useState([]);
+    const [category, setCategory] = React.useState([]);
+    const [inCategory, setInCategory] = React.useState('');
+    const router = useRouter();
 
-    const getProduct = React.useCallback(async(category="", limit=50)=>{
+    const getProduct = React.useCallback(async (category = '', limit = 50) => {
         try {
-            const {data} = await http().get("/products", {params: {category, limit}})
-            setProducts(data.results)
-            console.log(data)
+            const { data } = await http().get('/products', { params: { category, limit } });
+            setProducts(data.results);
+            console.log(data);
         } catch (error) {
-            const message = error?.response?.data?.message
-            return console.log(message)
+            const message = error?.response?.data?.message;
+            return console.log(message);
         }
-    }, [])
+    }, []);
 
-    const getCategory = React.useCallback(async()=>{
+    const getCategory = React.useCallback(async () => {
         try {
-            const {data} = await http().get("/categories")
-            setCategory(data.results)
-            console.log(data)
+            const { data } = await http().get('/categories');
+            setCategory(data.results);
+            console.log(data);
         } catch (error) {
-            const message = error?.response?.data?.message
-            return console.log(message)
+            const message = error?.response?.data?.message;
+            return console.log(message);
         }
-    },[])
+    }, []);
 
-    const doDetailProduct = (id)=>{
-        router.replace("/product/"+id)
-    }
+    const doDetailProduct = (id) => {
+        router.replace('/product/' + id);
+    };
 
-    React.useEffect(()=>{
-        getProduct(inCategory)
-        getCategory()
-    },[getProduct, getCategory, inCategory])
+    React.useEffect(() => {
+        getProduct(inCategory);
+        getCategory();
+    }, [getProduct, getCategory, inCategory]);
     return (
         <>
             <title>Product | MugLife</title>
-            
+
             <Header token={token} />
             <main className="pt-28">
                 <div className="flex flex-col-reverse md:flex-row items-start w-full">
@@ -101,31 +98,35 @@ function Product({token}) {
                                 {/* <div className="flex justify-center items-center ">
                                     <button className="text-secondary text-lg font-semibold h-full border-b-2 border-secondary w-40">Fafourite Product</button>
                                 </div> */}
-                                {category.map(items =>{
-                                    return(
-                                        <div 
-                                            key={`category-${items.id}`} 
-                                            className={`flex justify-center items-center text-secondary hover:text-accent ${items.name === inCategory && "border-b-2 border-secondary font-semibold "}`}
-                                        >
-                                            <button onClick={()=>setInCategory(items.name)} className="text-lg h-full w-24">{items.name}</button>
+                                {category.map((items) => {
+                                    return (
+                                        <div key={`category-${items.id}`} className={`flex justify-center items-center text-secondary hover:text-accent ${items.name === inCategory && 'border-b-2 border-secondary font-semibold '}`}>
+                                            <button onClick={() => setInCategory(items.name)} className="text-lg h-full w-24">
+                                                {items.name}
+                                            </button>
                                         </div>
-                                    )
+                                    );
                                 })}
                             </div>
                         </div>
 
                         <div className="flex flex-wrap gap-9 items-center justify-center pt-16 h-screen overflow-scroll scrollbar-hide mb-5 px-11 xl:px-24">
-                            {products.map(items =>{
-                                return(
-                                    <button onClick={()=>doDetailProduct(items.id)} key={`product${items.id}`} className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
-                                        <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
-                                            {items.picture ? (<Image width={128} height={128} src={items.picture} alt="Product-Image"/>) 
-                                            : (<Image src={ProductImage} alt="Product-Image"/>) }
+                            {products.map((items) => {
+                                return (
+                                    <button
+                                        onClick={() => doDetailProduct(items.id)}
+                                        key={`product${items.id}`}
+                                        className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md"
+                                    >
+                                        <div className="absolute -top-16 w-32 h-32 rounded-full object-cover overflow-hidden">
+                                            {items.picture ? <Image width={100} height={100} src={items.picture} className="object-cover w-full h-full" alt="Product-Image" /> : <Image src={ProductImage} alt="Product-Image" />}
                                         </div>
                                         <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">{items.name}</div>
-                                        <div className="text-lg text-secondary font-semibold">{`Rp${Number(items.variant[1]?.price).toLocaleString("id")}`}</div>
+
+                                        <div className="text-lg text-secondary font-semibold">{`Rp${Number(items?.variant[1]?.price).toLocaleString('id')}`}</div>
+
                                     </button>
-                                )
+                                );
                             })}
                         </div>
                     </div>
