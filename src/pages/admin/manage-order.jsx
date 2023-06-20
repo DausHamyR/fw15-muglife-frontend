@@ -6,6 +6,33 @@ import hazelnut from "../../assets/image 36.svg";
 import wings from "../../assets/image 37.svg";
 import bank from "../../assets/acc.png";
 
+import cookieConfig from '@/helpers/cookieConfig';
+import { withIronSessionSsr } from "iron-session/next";
+import checkCredentials from "@/helpers/checkCredentials";
+import http from "@/helpers/http.helper";
+
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req, res }) {
+    const token = req.session?.token;
+    checkCredentials(token, res, '/auth/login');
+
+    const {data} = await http(token).get("/profile")
+    if(data.results.role === "general"){
+        res.setHeader('location', "/product")
+        res.statusCode = 302
+        res.end()
+        return {
+            props: {}
+        };
+    }
+
+    return {
+        props: {
+            token,
+        },
+    };
+}, cookieConfig);
+
 const ManageOrders = () => {
     return (
         <>

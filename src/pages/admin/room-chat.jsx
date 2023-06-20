@@ -8,11 +8,38 @@ import { RiCheckDoubleFill } from "react-icons/ri";
 import camera from "../../assets/camera.png";
 import Navbar from "../../components/Header";
 
-const RoomChatAdmin = () => {
+import cookieConfig from '@/helpers/cookieConfig';
+import { withIronSessionSsr } from "iron-session/next";
+import checkCredentials from "@/helpers/checkCredentials";
+import http from "@/helpers/http.helper";
+
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req, res }) {
+    const token = req.session?.token;
+    checkCredentials(token, res, '/auth/login');
+
+    const {data} = await http(token).get("/profile")
+    if(data.results.role === "general"){
+        res.setHeader('location', "/chat")
+        res.statusCode = 302
+        res.end()
+        return {
+            props: {}
+        };
+    }
+
+    return {
+        props: {
+            token,
+        },
+    };
+}, cookieConfig);
+
+const RoomChatAdmin = ({token}) => {
     return (
         <>
             <title>Room Chat | MugLife</title>
-            <Navbar />
+            <Navbar token={token} />
             <div className="pt-[100px] font-poppins">
                 <div className="lg:bg-[url('../assets/background-chat.png')] bg-cover bg-no-repeat pb-[89px]">
                     <div className="lg:pt-[84px] lg:px-[200px] lg:flex ">

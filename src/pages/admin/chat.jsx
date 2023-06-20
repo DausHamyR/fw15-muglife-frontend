@@ -11,11 +11,22 @@ import Navbar from "../../components/Header";
 import cookieConfig from '@/helpers/cookieConfig';
 import { withIronSessionSsr } from "iron-session/next";
 import checkCredentials from "@/helpers/checkCredentials";
+import http from "@/helpers/http.helper";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
     const token = req.session?.token;
     checkCredentials(token, res, '/auth/login');
+
+    const {data} = await http(token).get("/profile")
+    if(data.results.role === "general"){
+        res.setHeader('location', "/chat")
+        res.statusCode = 302
+        res.end()
+        return {
+            props: {}
+        };
+    }
 
     return {
         props: {

@@ -122,7 +122,9 @@ function Product({ token }) {
                                             {items.picture ? <Image width={100} height={100} src={items.picture} className="object-cover w-full h-full" alt="Product-Image" /> : <Image src={ProductImage} alt="Product-Image" />}
                                         </div>
                                         <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">{items.name}</div>
+
                                         <div className="text-lg text-secondary font-semibold">{`Rp${Number(items?.variant[1]?.price).toLocaleString('id')}`}</div>
+
                                     </button>
                                 );
                             })}
