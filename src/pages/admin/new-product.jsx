@@ -10,6 +10,33 @@ import * as Yup from 'yup';
 import { AiFillCamera, AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { useRouter } from 'next/router';
 
+import cookieConfig from '@/helpers/cookieConfig';
+import { withIronSessionSsr } from "iron-session/next";
+import checkCredentials from "@/helpers/checkCredentials";
+
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req, res }) {
+    const token = req.session?.token;
+    checkCredentials(token, res, '/auth/login');
+
+    const {data} = await http(token).get("/profile")
+    if(data.results.role === "general"){
+        res.setHeader('location', "/product")
+        res.statusCode = 302
+        res.end()
+        return {
+            props: {}
+        };
+    }
+
+    return {
+        props: {
+            token,
+        },
+    };
+}, cookieConfig);
+
+
 const VARIANT = [
     {
         code: 'R',
@@ -37,7 +64,7 @@ const VARIANT = [
     },
 ];
 
-function NewProduct() {
+function NewProduct({token}) {
     const router = useRouter();
     const [btnHD, setBtnHD] = React.useState('btn-info');
     const [btnDI, setBtnDI] = React.useState('btn-info');
@@ -158,7 +185,7 @@ function NewProduct() {
             <Head>
                 <title>New Product</title>
             </Head>
-            <Header />
+            <Header token={token}/>
             <main className="pt-28">
                 <div className="w-full flex flex-col items-start justify-start gap-11 px-5 sm:px-11 lg:px-36 py-11">
                     <div className="w-full text-lg font-semibold">
