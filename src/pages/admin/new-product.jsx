@@ -61,6 +61,7 @@ function NewProduct() {
         getDataCategory();
     }, []);
 
+    console.log(btnHD);
     const handleDelivery = (deliver) => {
         if (deliver === 'homeDelivery') {
             setBtnHD('btn-accent');
@@ -144,11 +145,12 @@ function NewProduct() {
         if (selectedPicture) {
             formProduct.append('picture', selectedPicture);
         }
-        await http().post('/products/admin', formProduct, {
+        const { data } = await http().post('/products/admin', formProduct, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
         });
+        console.log(data);
         router.push('/admin/product');
         setOpenModoal(false);
     };
@@ -173,6 +175,8 @@ function NewProduct() {
                             quantity: '',
                             variant: [],
                             price: '',
+                            start_delivery: '',
+                            end_delivery: '',
                         }}
                         validationSchema={validationSchema}
                         onSubmit={createNewProduct}
@@ -229,6 +233,19 @@ function NewProduct() {
                                             </label>
                                         )}
                                     </div>
+                                    {btnHD === 'btn-accent' && (
+                                        <div className="w-full md:max-w-[400px] flex flex-col items-start justify-start gap-5">
+                                            <div className="text-xl text-primary font-semibold">Delivery Hour :</div>
+                                            <div className="w-full">
+                                                <div className="text-sm">Input start hour</div>
+                                                <input type="time" name="start_delivery" onChange={handleChange} onBlur={handleBlur} value={values.start_delivery} className="w-full input input-accent" placeholder="Input start hour" />
+                                            </div>
+                                            <div className="w-full">
+                                                <div className="text-sm">Input end hour</div>
+                                                <input type="time" name="end_delivery" onChange={handleChange} onBlur={handleBlur} value={values.end_delivery} className="w-full input input-accent" placeholder="Input end hour" />
+                                            </div>
+                                        </div>
+                                    )}
                                     <div className="w-full md:max-w-[400px] flex flex-col items-start justify-start gap-5">
                                         <div className="text-xl text-primary font-semibold">Input stock</div>
 
