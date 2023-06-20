@@ -18,11 +18,23 @@ import http from '@/helpers/http.helper'
 import { useRouter } from 'next/router'
 import { Field, Formik } from 'formik'
 import * as Yup from 'yup';
+import { useDispatch, useSelector } from 'react-redux'
+import { setEditProduct } from '@/redux/reducers/editProduct'
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
     const token = req.session?.token;
     checkCredentials(token, res, '/auth/login');
+
+    const {data} = await http(token).get("/profile")
+    if(data.results.role === "general"){
+        res.setHeader('location', "/product")
+        res.statusCode = 302
+        res.end()
+        return {
+            props: {}
+        };
+    }
 
     return {
         props: {
@@ -52,20 +64,33 @@ const VARIANT = [
 ];
 
 const EditProduct = ({token}) => {
+    const dispatch = useDispatch()
     const {query: {id}} = useRouter()
     const [edit, setEdit] = React.useState(false)
-    const [product, setProduct] = React.useState({})
+    const product = useSelector(state=>state.editProduct.data)
     const [variant, setVariant] = React.useState([])
-    const [delivery, setDelivery] = React.useState([])
 
-    const router = useRouter();
     const [btnHD, setBtnHD] = React.useState('btn-info');
     const [btnDI, setBtnDI] = React.useState('btn-info');
     const [btnTA, setBtnTA] = React.useState('btn-info');
-    const [selectedPicture, setSelectedPicture] = React.useState(false);
-    const [pictureURI, setPictureURI] = React.useState('');
-    const [errPicture, setErrPicture] = React.useState('');
     const [openModal, setOpenModoal] = React.useState(false);
+
+    const getProduct = React.useCallback(async()=>{
+        try {
+            const {data} = await http().get("/products/"+id)
+            if(data.results){
+                dispatch(setEditProduct(data.results))
+                setVariant(data.results.variant)
+            }
+        } catch (error) {
+            const message = error?.response?.data?.message
+            return console.log(message)
+        }
+    },[])
+
+    React.useEffect(()=>{
+        getProduct()
+    },[getProduct])
 
     const handleDelivery = (deliver) => {
         if (deliver === 'homeDelivery') {
@@ -83,39 +108,9 @@ const EditProduct = ({token}) => {
         }
     };
 
-    const getProduct = React.useCallback(async()=>{
-        try {
-            const {data} = await http().get("/products/"+id)
-            if(data.results){
-                setProduct(data.results)
-                setVariant(data.results.variant)
-            }
-        } catch (error) {
-            const message = error?.response?.data?.message
-            return console.log(message)
-        }
-    },[])
-
-    const getDelivery = React.useCallback(async()=>{
-        try {
-            const {data} = await http().get("/delivery-method")
-            if(data.results){
-                setDelivery(data.results)
-            }
-        } catch (error) {
-            const message = error?.response?.data?.message
-            return console.log(message)
-        }
-    },[])
-
     const doEdit = ()=>{
         setEdit(!edit)
     }
-
-    React.useEffect(()=>{
-        getDelivery()
-        getProduct()
-    },[getProduct, getDelivery])
 
     let [count, setCount] = React.useState(1);
     let increment = () => {
@@ -131,32 +126,12 @@ const EditProduct = ({token}) => {
         return setCount(count - 1);
     };
 
-    // const fileToDataUrl = (file) => {
-    //     const reader = new FileReader();
-    //     reader.addEventListener('load', () => {
-    //         setPictureURI(reader.result);
-    //     });
-    //     reader.readAsDataURL(file);
-    // };
-
-    // const changePicture = (e) => {
-    //     const file = e.target.files[0];
-    //     setSelectedPicture(file);
-    //     fileToDataUrl(file);
-    // };
-
     const updateProduct = async (values) => {
         setOpenModoal(true);
-        if (selectedPicture === false) {
-            setOpenModoal(false);
-            setErrPicture('Please select product picture');
-            return;
-        } else {
-            setErrPicture('');
-        }
         values.variant = VARIANT.filter((item) => values.variant.includes(item.code));
         values.variant.forEach((item, index) => {
-            values.variant[index].quantity = parseInt(values.quantity);
+            console.log(count)
+            values.variant[index].quantity = parseInt(count);
             values.variant[index].price = values.price;
             switch (values.variant[index].code) {
                 case 'R': {
@@ -177,7 +152,7 @@ const EditProduct = ({token}) => {
                 }
             }
         });
-        console.log(v)
+
         values.variant = JSON.stringify(values.variant);
         const formProduct = new FormData();
         Object.keys(values).forEach((key) => {
@@ -185,16 +160,17 @@ const EditProduct = ({token}) => {
                 formProduct.append(key, values[key]);
             }
         })
-        if (selectedPicture) {
-            formProduct.append('picture', selectedPicture);
-        }
-        await http().post('/products/admin/'+id, formProduct, {
+        const {data} = await http().patch('/products/admin/'+id, formProduct, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
         })
-        router.push('/admin/product');
-        setOpenModoal(false);
+        if(data.results){
+            dispatch(setEditProduct(data.results))
+            setEdit(false)
+            setOpenModoal(false);
+        }
+       
     };
 
 
@@ -214,7 +190,7 @@ const EditProduct = ({token}) => {
                             <div className='text-[#3C2A21] font-semibold'>Edit Product</div>
                         </div>
 
-                        <div className='relatif flex flex-col justify-center items-center mt-[40px]'>
+                        <div className='relatif flex flex-col justify-center items-center mt-[40px] overflow-hidden w-[523px] h-[790px]'>
                             <div className='absolute pb-[700px] pl-[430px]'>
                                 <div className="border-1 w-[50px] h-[50px] rounded-[50%] bg-[#D5CEA3] flex justify-center items-center ">
                                     <div>
@@ -227,9 +203,8 @@ const EditProduct = ({token}) => {
                                     </div>
                                 </div>
                             </div>
-                            {product.picture ? (<Image width={400} height={400} src={product.picture} className="w-[523px] h-[790px]" alt="desc"/>) 
+                            {product.picture ? (<Image width={400} height={400} src={product.picture} className="h-[790px] w-full object-cover" alt="desc"/>) 
                                 : (<Image src={ProductImage} className="w-[523px] h-[790px]" alt="desc"/>) }
-                            {/* <Image src={drink} className="w-[523px] h-[790px]" alt="desc" ></Image> */}
                         </div>
 
                         <div className='pt-10 text-xl text-[#3C2A21]'>
@@ -243,8 +218,7 @@ const EditProduct = ({token}) => {
                             product_delivery_id: '',
                             quantity: '',
                             variant: [],
-                            price: "",
-                            name: product?.name || "",
+                            price: product?.price,
                             descriptions: product?.decriptions || ""
                         }}
                         validationSchema = {validationSchema}
@@ -264,14 +238,15 @@ const EditProduct = ({token}) => {
                                         {!edit && <div className="text-3xl text-secondary font-semibold py-6">{`IDR${Number(variant[0]?.price).toLocaleString("id")}`}</div>}
                                         {edit &&
                                             <div className='flex flex-col gap-1'>
-                                                <input 
-                                                    className='input outline-none bg-white font-semibold text-[#3C2A21]'
-                                                    type='text'
+                                                <Field
+                                                    type="text"
                                                     name="price"
-                                                    placeholder="Enter price product"
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
-                                                    value={values.price} />
+                                                    value={values.price}
+                                                    className=" input outline-none bg-white font-semibold text-[#3C2A21]"
+                                                    placeholder="Type the price"
+                                                />
                                                 {errors.price && touched.price && (
                                                     <label className="label">
                                                         <span className="label-text-alt text-error text-[16px]">{errors.price}</span>
@@ -324,21 +299,7 @@ const EditProduct = ({token}) => {
                                                 </label>
                                             </React.Fragment>
                                         ))}
-
-                                        {errors.variant && touched.variant && (
-                                            <label className="label">
-                                                <span className="label-text-alt text-error">{errors.variant}</span>
-                                            </label>
-                                        )}
                                     </div>
-                                    {/* <select className="select w-full bg-white border-secondary">
-                                        <option className="normal-case text-secondary" disabled selected>Pick Size</option>
-                                        {variant.map(items=>{
-                                            return(
-                                                <option key={`code-${items.code}`} value={items.code}  className='text-[14px] text-[#3C2A21]'>{items.code}</option>
-                                            )
-                                        })}
-                                    </select> */}
                                 </div>
 
                                 <div className='pt-5 pr-10'>
@@ -356,14 +317,6 @@ const EditProduct = ({token}) => {
                                             <Field value="3" type="radio" name="product_delivery_id" id="takeAway" className="appearance-none" />
                                         </label>
                                     </div>
-                                    {/* <select className="select w-full bg-white border-secondary">
-                                        <option className="normal-case text-secondary" disabled selected>Pick Delivery Methode</option>
-                                        {delivery.map(items=>{
-                                            return(
-                                                <option key={`delivery-${items.id}`} className='text-[14px] text-[#3C2A21]'>{items.name}</option>
-                                            )
-                                        })}
-                                    </select> */}
                                 </div>
 
                                 <div className='pt-10 flex gap-5'>

@@ -4,13 +4,39 @@ import Head from 'next/head';
 import React from 'react';
 import { AiFillCamera } from 'react-icons/ai';
 
-function NewPromo() {
+import cookieConfig from '@/helpers/cookieConfig';
+import { withIronSessionSsr } from "iron-session/next";
+import checkCredentials from "@/helpers/checkCredentials";
+
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req, res }) {
+    const token = req.session?.token;
+    checkCredentials(token, res, '/auth/login');
+
+    const {data} = await http(token).get("/profile")
+    if(data.results.role === "general"){
+        res.setHeader('location', "/product")
+        res.statusCode = 302
+        res.end()
+        return {
+            props: {}
+        };
+    }
+
+    return {
+        props: {
+            token,
+        },
+    };
+}, cookieConfig);
+
+function NewPromo({token}) {
     return (
         <>
             <Head>
                 <title>New Product</title>
             </Head>
-            <Header />
+            <Header token={token} />
             <main className="pt-28">
                 <div className="w-full flex flex-col items-start justify-start gap-11 px-5 sm:px-11 lg:px-36 py-11">
                     <div className="w-full text-lg font-semibold">

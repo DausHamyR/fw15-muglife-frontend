@@ -17,6 +17,17 @@ export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req, res }) {
     const token = req.session?.token;
     checkCredentials(token, res, '/auth/login');
+
+    const {data} = await http(token).get("/profile")
+    if(data.results.role === "general"){
+        res.setHeader('location', "/product")
+        res.statusCode = 302
+        res.end()
+        return {
+            props: {}
+        };
+    }
+
     return {
         props: {
             token,
@@ -101,7 +112,7 @@ function ProductAdmin({token}) {
                             </ol>
                         </div>
                         <div className="w-full text-center px-11 xl:px-24 py-14">
-                            <button className="btn btn-accent w-full capitalize text-primary">Add New Promo</button>
+                            <Link href="/admin/new-promo" className="btn btn-accent w-full capitalize text-primary">Add New Promo</Link>
                         </div>
                     </div>
                     <div className="overflow-hidden w-full lg:w-[73%] flex flex-col items-start justify-center h-full pt-11 ">
@@ -143,125 +154,9 @@ function ProductAdmin({token}) {
                                     </label>
                                 )
                             })}
-                            {/* <div className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
-                                <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
-                                    <Image src={food} width={128} alt="" />
-                                </div>
-                                <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">Veggie tomato mix</div>
-                                <div className="text-lg text-secondary font-semibold">IDR 34.000</div>
-
-                                <button className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
-                                    <IoPencilSharp size={13} className="text-white" />
-                                </button>
-                            </div>
-                            <div className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
-                                <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
-                                    <Image src={food} width={128} alt="" />
-                                </div>
-                                <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">Veggie tomato mix</div>
-                                <div className="text-lg text-secondary font-semibold">IDR 34.000</div>
-                            </div>
-                            <div className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
-                                <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
-                                    <Image src={food} width={128} alt="" />
-                                </div>
-                                <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">Veggie tomato mix</div>
-                                <div className="text-lg text-secondary font-semibold">IDR 34.000</div>
-                            </div>
-                            <div className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
-                                <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
-                                    <Image src={food} width={128} alt="" />
-                                </div>
-                                <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">Veggie tomato mix</div>
-                                <div className="text-lg text-secondary font-semibold">IDR 34.000</div>
-                            </div>
-                            <div className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
-                                <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
-                                    <Image src={food} width={128} alt="" />
-                                </div>
-                                <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">Veggie tomato mix</div>
-                                <div className="text-lg text-secondary font-semibold">IDR 34.000</div>
-                            </div>
-                            <div className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
-                                <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
-                                    <Image src={food} width={128} alt="" />
-                                </div>
-                                <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">Veggie tomato mix</div>
-                                <div className="text-lg text-secondary font-semibold">IDR 34.000</div>
-                            </div>
-                            <div className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
-                                <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
-                                    <Image src={food} width={128} alt="" />
-                                </div>
-                                <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">Veggie tomato mix</div>
-                                <div className="text-lg text-secondary font-semibold">IDR 34.000</div>
-                            </div>
-                            <div className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
-                                <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
-                                    <Image src={food} width={128} alt="" />
-                                </div>
-                                <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">Veggie tomato mix</div>
-                                <div className="text-lg text-secondary font-semibold">IDR 34.000</div>
-                            </div>
-                            <div className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
-                                <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
-                                    <Image src={food} width={128} alt="" />
-                                </div>
-                                <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">Veggie tomato mix</div>
-                                <div className="text-lg text-secondary font-semibold">IDR 34.000</div>
-                            </div>
-                            <div className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
-                                <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
-                                    <Image src={food} width={128} alt="" />
-                                </div>
-                                <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">Veggie tomato mix</div>
-                                <div className="text-lg text-secondary font-semibold">IDR 34.000</div>
-                            </div>
-                            <div className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
-                                <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
-                                    <Image src={food} width={128} alt="" />
-                                </div>
-                                <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">Veggie tomato mix</div>
-                                <div className="text-lg text-secondary font-semibold">IDR 34.000</div>
-                            </div>
-                            <div className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
-                                <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
-                                    <Image src={food} width={128} alt="" />
-                                </div>
-                                <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">Veggie tomato mix</div>
-                                <div className="text-lg text-secondary font-semibold">IDR 34.000</div>
-                            </div>
-                            <div className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
-                                <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
-                                    <Image src={food} width={128} alt="" />
-                                </div>
-                                <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">Veggie tomato mix</div>
-                                <div className="text-lg text-secondary font-semibold">IDR 34.000</div>
-                            </div>
-                            <div className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
-                                <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
-                                    <Image src={food} width={128} alt="" />
-                                </div>
-                                <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">Veggie tomato mix</div>
-                                <div className="text-lg text-secondary font-semibold">IDR 34.000</div>
-                            </div>
-                            <div className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
-                                <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
-                                    <Image src={food} width={128} alt="" />
-                                </div>
-                                <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">Veggie tomato mix</div>
-                                <div className="text-lg text-secondary font-semibold">IDR 34.000</div>
-                            </div>
-                            <div className="relative mb-20 w-[160px] h-[220px] flex flex-col items-center justify-end gap-3 rounded-3xl py-3 bg-white drop-shadow-md">
-                                <div className="absolute -top-16 w-32 h-32 rounded-full overflow-hidden">
-                                    <Image src={food} width={128} alt="" />
-                                </div>
-                                <div className="font-label-food text-2xl text-primary font-extrabold w-full h-24 overflow-hidden text-center px-3">Veggie tomato mix</div>
-                                <div className="text-lg text-secondary font-semibold">IDR 34.000</div>
-                            </div> */}
                         </div>
                         <div className="w-full text-center px-11 xl:px-24 py-11">
-                            <button className="btn btn-secondary w-full capitalize text-white">Add new product</button>
+                            <Link href="/admin/new-product" className="btn btn-secondary w-full capitalize text-white">Add new product</Link>
                         </div>
                     </div>
                 </div>
