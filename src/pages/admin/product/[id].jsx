@@ -114,8 +114,8 @@ const ProductDetails = ({token}) => {
                                     <button onClick={()=>window.my_modal_1.showModal()} className='font-semibold bg-black hover:bg-[#666A6D] py-5 w-full rounded-lg text-white'>Delete Menu</button>
                                     <dialog id="my_modal_1" className="modal">
                                     <form method="dialog" className="modal-box bg-white">
-                                        <h3 className="font-bold text-lg">Hello!</h3>
-                                        <p className="py-4">Press ESC key or click the button below to close</p>
+                                        <h3 className="font-bold text-lg">Delete Product</h3>
+                                        <p className="py-4">Are you sure to delete the product?</p>
                                         <div className="modal-action">
                                         {/* if there is a button in form, it will close the modal */}
                                         <div className="flex gap-4 w-full justify-end">
