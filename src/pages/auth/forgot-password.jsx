@@ -91,7 +91,6 @@ function ForgotPassword() {
             setErrorMessage(message)
         }
     }
-
     return (
         <>
             <Head>
