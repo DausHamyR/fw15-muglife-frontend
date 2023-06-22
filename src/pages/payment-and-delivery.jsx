@@ -3,15 +3,15 @@ import Header from '@/components/Header';
 import Head from 'next/head';
 import React from 'react';
 import Image from 'next/image';
-import { AiFillCreditCard, AiTwotoneBank } from 'react-icons/ai';
+import { AiFillCreditCard, AiOutlineLoading3Quarters, AiTwotoneBank } from 'react-icons/ai';
 import { MdDeliveryDining } from 'react-icons/md';
 import ProductImage from '@/assets/ecommerce-default-product.png';
-
 import cookieConfig from '@/helpers/cookieConfig';
 import { withIronSessionSsr } from 'iron-session/next';
 import checkCredentials from '@/helpers/checkCredentials';
 import { useSelector } from 'react-redux';
 import http from '@/helpers/http.helper';
+import { useRouter } from 'next/router';
 
 export const getServerSideProps = withIronSessionSsr(async function getServerSideProps({ req, res }) {
     const token = req.session?.token;
@@ -26,12 +26,26 @@ export const getServerSideProps = withIronSessionSsr(async function getServerSid
 
 function PaymmentAndDelivery({ token }) {
     const profile = useSelector((state) => state.profile.data);
+    const router = useRouter();
     const [transaction, setTransaction] = React.useState([]);
+    const [paymentMethod, setPaymentMethod] = React.useState([]);
+    const [selectedPayment, setSelectedPayment] = React.useState(1);
+    const [openModal, setOpenModoal] = React.useState(false);
 
     // const grandTotal = (parseInt(transaction[0]?.total) * 10) / 100 + parseInt(transaction[0]?.total);
     // console.log(grandTotal);
-    // const handleConfirmPay = async () => {};
 
+    const getPM = React.useCallback(async () => {
+        try {
+            const { data } = await http().get(`/payment-method`);
+            setPaymentMethod(data.results);
+        } catch (error) {
+            const message = error?.response?.data?.message;
+            return console.log('error fetching data');
+        }
+    }, []);
+
+    // console.log(paymentMethod);
     const getTransaction = React.useCallback(async () => {
         try {
             const { data } = await http(token).get(`/transactions`);
@@ -42,11 +56,30 @@ function PaymmentAndDelivery({ token }) {
         }
     }, [token]);
 
+    const doPayment = async (e) => {
+        e.preventDefault();
+        setOpenModoal(true);
+
+        const trId = transaction[0]?.id;
+        const totalPay = (parseInt(transaction[0]?.total) * 10) / 100 + parseInt(transaction[0]?.total);
+        const form = new URLSearchParams({
+            id: trId,
+            payment_method: selectedPayment,
+            total: totalPay,
+        }).toString();
+
+        // console.log(form);
+        const { data } = await http(token).post('/payment-method', form);
+        router.push('/history');
+        setOpenModoal(false);
+    };
+
     React.useEffect(() => {
         getTransaction();
-    }, [getTransaction]);
+        getPM();
+    }, [getTransaction, getPM]);
 
-    // console.log(transaction[0].items);
+    // console.log(transaction[0]);
     return (
         <>
             <Head>
@@ -100,7 +133,7 @@ function PaymmentAndDelivery({ token }) {
                                 </div>
                             </div>
                         </div>
-                        <div className="w-full md:flex-1">
+                        <form onSubmit={doPayment} className="w-full md:flex-1">
                             <div className="w-full md:max-w-[650px] flex flex-col gap-5">
                                 <div className="flex items-center justify-between">
                                     <div className="text-2xl text-white font-bold capitalize">Address details</div>
@@ -117,7 +150,7 @@ function PaymmentAndDelivery({ token }) {
                                 <div className="bg-white w-full rounded-3xl p-7 flex flex-col items-start gap-3">
                                     <div className="w-full h-20 flex items-center justify-start gap-5 border-b border-gray-200">
                                         <div className="w-4 h-full flex items-center justify-center">
-                                            <input type="radio" name="payment" id="" />
+                                            <input type="radio" name="payment" value="2" onChange={(e) => setSelectedPayment(e.target.value)} id="" />
                                         </div>
                                         <div className="w-12 h-12 flex items-center justify-center bg-neutral rounded-xl">
                                             <AiFillCreditCard size={25} className="text-white" />
@@ -126,7 +159,7 @@ function PaymmentAndDelivery({ token }) {
                                     </div>
                                     <div className="w-full h-20 flex items-center justify-start gap-5 border-b border-gray-200">
                                         <div className="w-4 h-full flex items-center justify-center">
-                                            <input type="radio" name="payment" id="" />
+                                            <input type="radio" name="payment" value="1" onChange={(e) => setSelectedPayment(e.target.value)} id="" defaultChecked="1" />
                                         </div>
                                         <div className="w-12 h-12 flex items-center justify-center bg-secondary rounded-xl">
                                             <AiTwotoneBank size={25} className="text-white" />
@@ -135,7 +168,7 @@ function PaymmentAndDelivery({ token }) {
                                     </div>
                                     <div className="w-full h-20 flex items-center justify-start gap-5">
                                         <div className="w-4 h-full flex items-center justify-center">
-                                            <input type="radio" name="payment" id="" />
+                                            <input type="radio" name="payment" value="3" onChange={(e) => setSelectedPayment(e.target.value)} id="" />
                                         </div>
                                         <div className="w-12 h-12 flex items-center justify-center bg-accent rounded-xl">
                                             <MdDeliveryDining size={25} className="text-white" />
@@ -144,14 +177,26 @@ function PaymmentAndDelivery({ token }) {
                                     </div>
                                 </div>
                                 <div className="w-full mt-7">
-                                    <button className="w-full btn btn-secondary rounded-2xl text-white text-lg font-semibold capitalize">Confirm and Pay</button>
+                                    <button type="submit" className="w-full btn btn-secondary rounded-2xl text-white text-lg font-semibold capitalize">
+                                        Confirm and Pay
+                                    </button>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </main>
             <Footer />
+            <div>
+                <input type="checkbox" id="loading" className="modal-toggle" checked={openModal} />
+                <div className="modal">
+                    <div className="modal-box bg-transparent h-40 shadow-none overflow-hidden">
+                        <div className="flex flex-col justify-center items-center">
+                            <AiOutlineLoading3Quarters className="animate-spin" size={70} color="white" />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </>
     );
 }
