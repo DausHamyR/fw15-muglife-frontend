@@ -1,20 +1,20 @@
 import { useState } from 'react';
 
 const MyForm = () => {
-    const data = [
-        { id: 14, user_id: 5, item_id: 2, variant: 'R', quantity: '1' },
-        { id: 15, user_id: 5, item_id: 2, variant: 'L', quantity: '1' },
-    ];
+  const data = [
+    { id: 14, user_id: 5, item_id: 2, variant: 'R', quantity: '1' },
+    { id: 15, user_id: 5, item_id: 2, variant: 'L', quantity: '1' },
+  ];
 
-    const transformedData = {
-        item_id: data.map((item) => item.item_id.toString()),
-        variant: data.map((item) => item.variant),
-        quantity: data.map((item) => item.quantity),
-    };
+  const transformedData = {
+    item_id: data.map((item) => item.item_id.toString()),
+    variant: data.map((item) => item.variant),
+    quantity: data.map((item) => item.quantity),
+  };
 
-    console.log(transformedData);
+  console.log(transformedData);
 
-    return <div>tes</div>;
+  return <div>tes</div>;
 };
 
 export default MyForm;
