@@ -25,11 +25,11 @@ function Product({ token }) {
   const [products, setProducts] = React.useState([]);
   const [category, setCategory] = React.useState([]);
   const [search, setSearch] = React.useState('');
-  const [limit, setLimit] = React.useState(50);
-  const [sortBy, setSortBy] = React.useState('DESC');
   const [inCategory, setInCategory] = React.useState('');
   const [page, setPage] = React.useState(1);
   const [totalPage, setTotalPage] = React.useState();
+  const [limit, setLimit] = React.useState(50);
+  const [sortBy, setSortBy] = React.useState('DESC');
   const router = useRouter();
 
   const getProduct = React.useCallback(async (search='', category = '', limit = 50, sortBy='', page=1) => {
