@@ -108,7 +108,7 @@ function PaymmentAndDelivery({ token }) {
                         <div className="text-primary text-lg">x{item?.quantity}</div>
                         <div className="text-primary text-lg">{item.code === 'R' ? 'Regular' : item.code === 'L' ? 'Large' : item.code === 'XL' ? 'Extra Large' : items.variant}</div>
                       </div>
-                      <div className="h-full flex items-center justify-center text-primary text-lg">IDR {item?.price}</div>
+                      <div className="h-full flex items-center justify-center text-primary text-lg">IDR {Number(item?.price).toLocaleString('id')}</div>
                     </div>
                   );
                 })}
@@ -116,11 +116,11 @@ function PaymmentAndDelivery({ token }) {
                 <div className="w-full border-t border-grey-600 flex flex-col items-center gap-2 pt-7">
                   <div className="w-full flex items-center justify-between text-primary text-lg uppercase">
                     <div>SUBTOTAL</div>
-                    <div className="text-start">IDR {transaction[0]?.total}</div>
+                    <div className="text-start">IDR {Number(transaction[0]?.total).toLocaleString('id')}</div>
                   </div>
                   <div className="w-full flex items-center justify-between text-primary text-lg uppercase">
                     <div>TAX AND FEES</div>
-                    <div className="text-start">IDR {(parseInt(transaction[0]?.total) * 10) / 100}</div>
+                    <div className="text-start">IDR {Number((parseInt(transaction[0]?.total) * 10) / 100).toLocaleString('id')}</div>
                   </div>
                   <div className="w-full flex items-center justify-between text-primary text-lg uppercase">
                     <div>SHIPPING</div>
@@ -129,7 +129,7 @@ function PaymmentAndDelivery({ token }) {
                 </div>
                 <div className="w-full flex items-center justify-between text-primary text-2xl font-semibold uppercase">
                   <div>TOTAL</div>
-                  <div className="text-start">IDR {(parseInt(transaction[0]?.total) * 10) / 100 + parseInt(transaction[0]?.total)} </div>
+                  <div className="text-start">IDR {Number((parseInt(transaction[0]?.total) * 10) / 100 + parseInt(transaction[0]?.total)).toLocaleString('id')} </div>
                 </div>
               </div>
             </div>

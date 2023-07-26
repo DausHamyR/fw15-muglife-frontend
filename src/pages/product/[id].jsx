@@ -233,7 +233,7 @@ const ProductDetails = ({ token }) => {
                       <button
                         onClick={() => handleChangePrice(items.price, items.code)}
                         key={`variant-size${items.name}`}
-                        className="bg-info text-black hover:bg-[#8f6a57] cursor-pointer w-[50px] h-[50px] rounded-full flex justify-center items-center font-bold text-[20px]"
+                        className="bg-info text-black hover:bg-[#8f6a57] focus:bg-[#8f6a57] cursor-pointer w-[50px] h-[50px] rounded-full flex justify-center items-center font-bold text-[20px]"
                       >
                         {items.code}
                       </button>
@@ -258,7 +258,7 @@ const ProductDetails = ({ token }) => {
                     <button
                       disabled={items.name !== product.deliveryMethod}
                       key={`delivery-${items.id}`}
-                      className="btn normal-case border-none bg-[#F4F4F8] text-[#D5CEA3] hover:bg-[#8f6a57] py-3 rounded-lg px-[26px] drop-shadow-lg"
+                      className="btn normal-case border-none bg-[#F4F4F8] text-[#D5CEA3] hover:bg-[#8f6a57] focus:bg-[#8f6a57] py-3 rounded-lg px-[26px] drop-shadow-lg"
                     >
                       {items.name}
                     </button>
